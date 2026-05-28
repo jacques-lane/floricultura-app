@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#1a3a2a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Floricultura · Vendas</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-deep: #1a3a2a;
+    --green-mid: #2d5e3e;
+    --green-light: #4a8c62;
+    --green-pale: #e8f5ee;
+    --green-accent: #5db87a;
+    --rose: #d4607a;
+    --rose-pale: #fdf0f3;
+    --gold: #c9933a;
+    --gold-pale: #fdf6ec;
+    --cream: #faf8f4;
+    --ink: #1a1a1a;
+    --ink-mid: #444;
+    --ink-light: #888;
+    --border: #e2ded7;
+    --white: #ffffff;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    max-width: 430px;
+    margin: 0 auto;
+    overflow-x: hidden;
+  }
+
+  .header {
+    background: var(--green-deep);
+    padding: 52px 20px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '🌸';
+    position: absolute;
+    right: -10px; top: 10px;
+    font-size: 90px;
+    opacity: 0.08;
+    transform: rotate(20deg);
+  }
+  .header-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--green-accent);
+    margin-bottom: 4px;
+  }
+  .header-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    color: var(--white);
+    line-height: 1.2;
+  }
+  .header-title em { font-style: italic; color: var(--green-accent); }
+
+  /* Config banner */
+  .config-banner {
+    background: #fff8e6;
+    border-bottom: 1px solid #f0d98a;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: #7a5c00;
+    cursor: pointer;
+  }
+  .config-banner.connected {
+    background: var(--green-pale);
+    border-bottom-color: #a8d8b8;
+    color: var(--green-deep);
+  }
+  .config-banner span { flex: 1; }
+  .config-banner strong { font-weight: 600; }
+
+  .content { padding: 20px; }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--green-deep);
+    margin-bottom: 16px;
+  }
+
+  .form-group { margin-bottom: 14px; }
+  .form-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 6px;
+  }
+  .form-input {
+    width: 100%;
+    padding: 13px 16px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+  .form-input:focus {
+    border-color: var(--green-light);
+    box-shadow: 0 0 0 3px rgba(74,140,98,0.12);
+  }
+  .form-input::placeholder { color: var(--ink-light); }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .total-card {
+    background: var(--green-deep);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin: 18px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .total-label { font-size: 12px; color: rgba(255,255,255,0.6); font-weight: 500; }
+  .total-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--white);
+  }
+  .total-value span { font-size: 14px; font-weight: 300; margin-right: 4px; }
+
+  .payment-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 10px;
+  }
+  .payment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+  .payment-btn {
+    padding: 12px 8px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-mid);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+  }
+  .payment-btn.selected {
+    background: var(--green-pale);
+    border-color: var(--green-light);
+    color: var(--green-deep);
+  }
+  .payment-btn .pay-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+
+  .btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-primary { background: var(--green-deep); color: var(--white); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .btn-whatsapp { background: #25D366; color: var(--white); margin-top: 10px; }
+  .btn-whatsapp:active { transform: scale(0.98); }
+  .btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--ink-mid);
+    margin-top: 8px;
+  }
+
+  /* Spinner */
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: 24px 24px 0 0;
+    padding: 24px 20px 40px;
+    width: 100%;
+    max-width: 430px;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-handle {
+    width: 36px; height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+  .modal-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--green-deep);
+    margin-bottom: 16px;
+  }
+  .recibo-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .recibo-row:last-of-type { border-bottom: none; }
+  .recibo-label { color: var(--ink-light); }
+  .recibo-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0 0;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--green-deep);
+  }
+
+  /* Config modal */
+  .config-modal {
+    background: var(--white);
+    border-radius: 24px 24px 0 0;
+    padding: 24px 20px 40px;
+    width: 100%;
+    max-width: 430px;
+    animation: slideUp 0.3s ease;
+  }
+  .config-step {
+    background: var(--green-pale);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: var(--green-deep);
+    line-height: 1.5;
+  }
+  .config-step strong { font-weight: 600; display: block; margin-bottom: 2px; }
+  .config-step code {
+    background: var(--green-deep);
+    color: var(--green-accent);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    word-break: break-all;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--green-deep);
+    color: var(--white);
+    padding: 12px 20px;
+    border-radius: 40px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 200;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.error { background: #c0392b; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-label">Floricultura</div>
+  <div class="header-title">Nova <em>venda</em></div>
+</div>
+
+<!-- Banner de status da conexão -->
+<div class="config-banner" id="config-banner" onclick="abrirConfig()">
+  <span id="banner-text">⚙️ <strong>Configure</strong> a conexão com o Google Sheets</span>
+  <span>→</span>
+</div>
+
+<div class="content">
+  <p class="section-title">Dados do pedido</p>
+
+  <div class="form-group">
+    <label class="form-label">Nome do cliente</label>
+    <input class="form-input" id="nome" type="text" placeholder="Ex: Maria Silva" autocomplete="off">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Telefone</label>
+    <input class="form-input" id="telefone" type="tel" placeholder="(11) 99999-9999" oninput="maskPhone(this)">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Produto</label>
+    <input class="form-input" id="produto" type="text" placeholder="Ex: Buquê de rosas" autocomplete="off">
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label">Quantidade</label>
+      <input class="form-input" id="qtd" type="number" min="1" value="1" oninput="calcTotal()">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Valor unitário (R$)</label>
+      <input class="form-input" id="valor" type="number" min="0" step="0.01" placeholder="0,00" oninput="calcTotal()">
+    </div>
+  </div>
+
+  <div class="total-card">
+    <div>
+      <div class="total-label">Valor total</div>
+      <div class="total-value" id="total-display"><span>R$</span>0,00</div>
+    </div>
+    <div style="font-size: 32px; opacity: 0.4;">🌸</div>
+  </div>
+
+  <div class="payment-title">Forma de pagamento</div>
+  <div class="payment-grid">
+    <button class="payment-btn selected" onclick="selectPay(this, 'Dinheiro')">
+      <span class="pay-icon">💵</span>Dinheiro
+    </button>
+    <button class="payment-btn" onclick="selectPay(this, 'Pix')">
+      <span class="pay-icon">📲</span>Pix
+    </button>
+    <button class="payment-btn" onclick="selectPay(this, 'Cartão de crédito')">
+      <span class="pay-icon">💳</span>Crédito
+    </button>
+    <button class="payment-btn" onclick="selectPay(this, 'Cartão de débito')">
+      <span class="pay-icon">💳</span>Débito
+    </button>
+  </div>
+
+  <button class="btn btn-primary" id="btn-finalizar" onclick="finalizarVenda()">
+    <span id="btn-text">Finalizar venda ✓</span>
+    <div class="spinner" id="spinner"></div>
+  </button>
+</div>
+
+<!-- Modal recibo -->
+<div class="modal-overlay" id="modal-recibo" onclick="closeModal(event, 'modal-recibo')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🌷 Recibo da venda</div>
+    <div id="modal-content"></div>
+    <div id="sheets-status" style="margin: 12px 0; font-size: 12px; text-align: center; color: var(--green-light);"></div>
+    <button class="btn btn-whatsapp" onclick="enviarWhatsapp()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      Enviar recibo por WhatsApp
+    </button>
+    <button class="btn btn-outline" onclick="novaVenda()">Nova venda</button>
+  </div>
+</div>
+
+<!-- Modal configuração -->
+<div class="modal-overlay" id="modal-config" onclick="closeModal(event, 'modal-config')">
+  <div class="config-modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">⚙️ Conectar ao Google Sheets</div>
+
+    <div class="config-step">
+      <strong>Passo 1 — Crie a planilha</strong>
+      Acesse <a href="https://sheets.google.com" target="_blank" style="color: var(--green-light);">sheets.google.com</a>, crie uma nova planilha e nomeie a primeira aba como <code>Vendas</code>.
+    </div>
+
+    <div class="config-step">
+      <strong>Passo 2 — Abra o Apps Script</strong>
+      No menu da planilha: <code>Extensões → Apps Script</code>. Apague o código existente e cole o código abaixo:
+    </div>
+
+    <div style="background: #1a3a2a; border-radius: var(--radius-sm); padding: 14px; margin-bottom: 10px; position: relative;">
+      <pre id="script-code" style="font-size: 11px; color: #5db87a; overflow-x: auto; white-space: pre-wrap; line-height: 1.5;">function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp
+      .getActiveSpreadsheet()
+      .getSheetByName('Vendas');
+
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow([
+        'Data','Hora','Cliente',
+        'Telefone','Produto','Qtd',
+        'Valor Unit.','Total','Pagamento'
+      ]);
+    }
+
+    var d = JSON.parse(e.postData.contents);
+    sheet.appendRow([
+      d.data, d.hora, d.nome,
+      d.telefone, d.produto, d.qtd,
+      d.valorUnit, d.total, d.pagamento
+    ]);
+
+    return ContentService
+      .createTextOutput(
+        JSON.stringify({ok: true})
+      )
+      .setMimeType(
+        ContentService.MimeType.JSON
+      );
+  } catch(err) {
+    return ContentService
+      .createTextOutput(
+        JSON.stringify({ok:false,
+          erro: err.toString()})
+      )
+      .setMimeType(
+        ContentService.MimeType.JSON
+      );
+  }
+}</pre>
+      <button onclick="copiarScript()" style="position:absolute;top:10px;right:10px;background:rgba(255,255,255,0.1);border:none;color:#5db87a;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;">Copiar</button>
+    </div>
+
+    <div class="config-step">
+      <strong>Passo 3 — Publique como Web App</strong>
+      Clique em <code>Implantar → Nova implantação</code> → tipo <code>App da Web</code> → Execute como <code>Eu</code> → Quem tem acesso <code>Qualquer pessoa</code> → Implantar. Copie a URL gerada.
+    </div>
+
+    <div class="form-group" style="margin-top: 12px;">
+      <label class="form-label">URL do Web App</label>
+      <input class="form-input" id="webhook-url" type="url" placeholder="https://script.google.com/macros/s/..." style="font-size: 13px;">
+    </div>
+
+    <button class="btn btn-primary" onclick="salvarConfig()">Salvar e conectar</button>
+    <button class="btn btn-outline" style="margin-top:8px;" onclick="closeModal({target: document.getElementById('modal-config')}, 'modal-config')">Fechar</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let pagamento = 'Dinheiro';
+let vendaAtual = null;
+let webhookUrl = localStorage.getItem('floricultura_webhook') || '';
+
+// Init
+updateBanner();
+
+function updateBanner() {
+  const banner = document.getElementById('config-banner');
+  const txt = document.getElementById('banner-text');
+  if (webhookUrl) {
+    banner.classList.add('connected');
+    txt.innerHTML = '✅ <strong>Conectado</strong> ao Google Sheets';
+  } else {
+    banner.classList.remove('connected');
+    txt.innerHTML = '⚙️ <strong>Configure</strong> a conexão com o Google Sheets';
+  }
+}
+
+function abrirConfig() {
+  if (webhookUrl) document.getElementById('webhook-url').value = webhookUrl;
+  document.getElementById('modal-config').classList.add('open');
+}
+
+function salvarConfig() {
+  const url = document.getElementById('webhook-url').value.trim();
+  if (!url.startsWith('https://script.google.com')) {
+    showToast('URL inválida. Use a URL do Apps Script.', true);
+    return;
+  }
+  webhookUrl = url;
+  localStorage.setItem('floricultura_webhook', url);
+  updateBanner();
+  document.getElementById('modal-config').classList.remove('open');
+  showToast('Conectado ao Google Sheets! ✓');
+}
+
+function copiarScript() {
+  const code = document.getElementById('script-code').textContent;
+  navigator.clipboard.writeText(code).then(() => showToast('Código copiado! ✓'));
+}
+
+function maskPhone(el) {
+  let v = el.value.replace(/\D/g, '').slice(0, 11);
+  if (v.length > 6) v = '(' + v.slice(0,2) + ') ' + v.slice(2,7) + '-' + v.slice(7);
+  else if (v.length > 2) v = '(' + v.slice(0,2) + ') ' + v.slice(2);
+  el.value = v;
+}
+
+function calcTotal() {
+  const qtd = parseFloat(document.getElementById('qtd').value) || 0;
+  const val = parseFloat(document.getElementById('valor').value) || 0;
+  const total = qtd * val;
+  document.getElementById('total-display').innerHTML =
+    '<span>R$</span>' + total.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function selectPay(btn, tipo) {
+  document.querySelectorAll('.payment-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  pagamento = tipo;
+}
+
+async function finalizarVenda() {
+  const nome  = document.getElementById('nome').value.trim();
+  const tel   = document.getElementById('telefone').value.trim();
+  const prod  = document.getElementById('produto').value.trim();
+  const qtd   = parseFloat(document.getElementById('qtd').value) || 0;
+  const val   = parseFloat(document.getElementById('valor').value) || 0;
+
+  if (!nome || !prod || qtd <= 0 || val <= 0) {
+    showToast('Preencha todos os campos!', true);
+    return;
+  }
+
+  const total = qtd * val;
+  const agora = new Date();
+  vendaAtual = {
+    nome, telefone: tel, produto: prod,
+    qtd, valorUnit: val, total, pagamento,
+    data: agora.toLocaleDateString('pt-BR'),
+    hora: agora.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})
+  };
+
+  // Loading state
+  const btn = document.getElementById('btn-finalizar');
+  document.getElementById('btn-text').textContent = 'Salvando...';
+  document.getElementById('spinner').style.display = 'block';
+  btn.disabled = true;
+
+  let salvo = false;
+  if (webhookUrl) {
+    salvo = await enviarParaSheets(vendaAtual);
+  }
+
+  // Reset button
+  document.getElementById('btn-text').textContent = 'Finalizar venda ✓';
+  document.getElementById('spinner').style.display = 'none';
+  btn.disabled = false;
+
+  abrirModalRecibo(vendaAtual, salvo);
+}
+
+async function enviarParaSheets(venda) {
+  try {
+    await fetch(webhookUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(venda)
+    });
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function abrirModalRecibo(v, salvo) {
+  const payEmoji = { 'Dinheiro':'💵','Pix':'📲','Cartão de crédito':'💳','Cartão de débito':'💳' };
+  document.getElementById('modal-content').innerHTML = `
+    <div class="recibo-row"><span class="recibo-label">Cliente</span><span>${v.nome}</span></div>
+    <div class="recibo-row"><span class="recibo-label">Telefone</span><span>${v.telefone || '—'}</span></div>
+    <div class="recibo-row"><span class="recibo-label">Produto</span><span>${v.produto}</span></div>
+    <div class="recibo-row"><span class="recibo-label">Quantidade</span><span>${v.qtd}</span></div>
+    <div class="recibo-row"><span class="recibo-label">Valor unitário</span><span>R$ ${v.valorUnit.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span></div>
+    <div class="recibo-row"><span class="recibo-label">Pagamento</span><span>${payEmoji[v.pagamento]||''} ${v.pagamento}</span></div>
+    <div class="recibo-row"><span class="recibo-label">Data / Hora</span><span>${v.data} às ${v.hora}</span></div>
+    <div class="recibo-total"><span>Total</span><span>R$ ${v.total.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span></div>
+  `;
+
+  const status = document.getElementById('sheets-status');
+  if (!webhookUrl) {
+    status.textContent = '⚠️ Venda não salva — configure o Google Sheets';
+    status.style.color = '#c9933a';
+  } else if (salvo) {
+    status.textContent = '✅ Salvo no Google Sheets';
+    status.style.color = 'var(--green-light)';
+  } else {
+    status.textContent = '❌ Erro ao salvar na planilha';
+    status.style.color = '#c0392b';
+  }
+
+  document.getElementById('modal-recibo').classList.add('open');
+}
+
+function enviarWhatsapp() {
+  if (!vendaAtual) return;
+  const v = vendaAtual;
+  const tel = v.telefone.replace(/\D/g, '');
+  const texto =
+    `🌸 *Recibo de Compra*\n\n` +
+    `👤 *Cliente:* ${v.nome}\n` +
+    `🌷 *Produto:* ${v.produto}\n` +
+    `📦 *Qtd:* ${v.qtd} x R$ ${v.valorUnit.toLocaleString('pt-BR',{minimumFractionDigits:2})}\n` +
+    `💰 *Total:* R$ ${v.total.toLocaleString('pt-BR',{minimumFractionDigits:2})}\n` +
+    `💳 *Pagamento:* ${v.pagamento}\n` +
+    `📅 ${v.data} às ${v.hora}\n\n` +
+    `_Obrigado pela preferência! 🌸_`;
+  window.open(`https://wa.me/${tel}?text=${encodeURIComponent(texto)}`, '_blank');
+}
+
+function novaVenda() {
+  document.getElementById('modal-recibo').classList.remove('open');
+  ['nome','produto','valor'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('telefone').value = '';
+  document.getElementById('qtd').value = '1';
+  document.getElementById('total-display').innerHTML = '<span>R$</span>0,00';
+  document.querySelectorAll('.payment-btn').forEach((b,i) => b.classList.toggle('selected', i===0));
+  pagamento = 'Dinheiro';
+  vendaAtual = null;
+  document.getElementById('nome').focus();
+}
+
+function closeModal(e, id) {
+  if (e.target === document.getElementById(id))
+    document.getElementById(id).classList.remove('open');
+}
+
+function showToast(msg, error=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.toggle('error', error);
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
