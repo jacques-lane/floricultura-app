@@ -432,11 +432,33 @@ function fmtDateBR(d) {
   const yyyy = d.getFullYear();
   return `${dd}/${mm}/${yyyy}`;
 }
+function normalizeDateBR(val) {
+  if(!val) return '';
+  // ISO format from Google Sheets: "2026-05-30T03:00:00.000Z"
+  if(typeof val === 'string' && val.includes('T')) {
+    const d = new Date(val);
+    // Ajusta fuso: Google retorna UTC-3, então soma 3h
+    d.setHours(d.getHours() + 3);
+    return fmtDateBR(d);
+  }
+  // Já no formato dd/mm/yyyy
+  if(typeof val === 'string' && val.includes('/')) return val.trim();
+  return String(val).trim();
+}
+function normalizeHora(val) {
+  if(!val) return '—';
+  if(typeof val === 'string' && val.includes('T')) {
+    const d = new Date(val);
+    d.setHours(d.getHours() + 3);
+    return d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  }
+  return String(val).trim();
+}
 function hoje() { return fmtDateBR(new Date()); }
 function ontem() { const d=new Date(); d.setDate(d.getDate()-1); return fmtDateBR(d); }
 function fmt(n) { return 'R$ '+parseFloat(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function fmtK(n) { n=parseFloat(n||0); return n>=1000?(n/1000).toFixed(1)+'k':n.toFixed(0); }
-function vendasDia(dia) { return vendas.filter(r=>String(r.Data||'').trim()===dia); }
+function vendasDia(dia) { return vendas.filter(r=>normalizeDateBR(r.Data)===dia); }
 function fatDia(dia) { return vendasDia(dia).reduce((s,r)=>s+parseFloat(r.Total||0),0); }
 function last30() {
   const days=[]; const d=new Date();
@@ -523,7 +545,7 @@ function renderLiveFeed() {
   }
   el.innerHTML = vh.map(r=>`
     <div class="feed-item">
-      <div class="feed-time">${r.Hora||'—'}</div>
+      <div class="feed-time">${normalizeHora(r.Hora)}</div>
       <div class="feed-name">${r.Cliente||'—'} · ${(r.Produtos||'').split('(')[0].split('|')[0].trim()}</div>
       <div class="feed-val">${fmt(r.Total)}</div>
     </div>`).join('');
@@ -613,7 +635,7 @@ function drawLine30(id, labels, vals) {
 function renderHorarios() {
   const vh = vendasDia(hoje());
   const byHour={};
-  vh.forEach(r=>{ const h=(r.Hora||'').split(':')[0]; if(h) byHour[h]=(byHour[h]||0)+1; });
+  vh.forEach(r=>{ const h=normalizeHora(r.Hora).split(':')[0]; if(h&&h!=='—') byHour[h]=(byHour[h]||0)+1; });
   const max=Math.max(...Object.values(byHour),1);
   const el=document.getElementById('mini-heatmap');
   let html='';
@@ -710,7 +732,7 @@ const modalData = {
   }},
   horarios:{ title:'🕐 Horários de Pico', sub:'Distribuição das vendas por hora', fn: ()=>{
     const byHour={};
-    vendas.forEach(r=>{ const h=(r.Hora||'').split(':')[0]; if(h) byHour[parseInt(h)]=(byHour[parseInt(h)]||0)+1; });
+    vendas.forEach(r=>{ const h=normalizeHora(r.Hora).split(':')[0]; if(h&&h!=='—') byHour[parseInt(h)]=(byHour[parseInt(h)]||0)+1; });
     const max=Math.max(...Object.values(byHour),1);
     return Array.from({length:24},(_,h)=>`
       <div style="display:flex;align-items:center;gap:10px;padding:5px 0;">
@@ -766,7 +788,7 @@ const modalData = {
       <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px;">
         <div>
           <span style="font-weight:600;">${r.Cliente||'—'}</span>
-          <span style="color:rgba(255,255,255,.35);font-size:12px;margin-left:8px;">${r.Hora||'—'}</span>
+          <span style="color:rgba(255,255,255,.35);font-size:12px;margin-left:8px;">${normalizeHora(r.Hora)}</span>
         </div>
         <span style="color:#83AB33;font-weight:700;">${fmt(r.Total)}</span>
       </div>`).join('') || '<div style="color:rgba(255,255,255,.3)">Nenhuma venda hoje</div>';
