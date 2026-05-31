@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mayse · War Room</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --vf:#12340D; --vj:#83AB33; --vj2:#a8cc44; --vj3:#c8e87a;
+  --rosa:#F489A7; --rosa2:#f9b8cb; --rosa3:#fde8ef;
+  --cream:#F7F5F0; --branco:#FEFEFE;
+  --grafite:#1A1C19; --mid:#666; --light:#aaa;
+  --border:rgba(255,255,255,.08);
+  --card:rgba(255,255,255,.04);
+  --card-hover:rgba(255,255,255,.07);
+  --glow-green:0 0 40px rgba(131,171,51,.15);
+  --glow-rosa:0 0 40px rgba(244,137,167,.15);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;}
+body{
+  font-family:'Sora',sans-serif;
+  background:var(--vf);
+  color:var(--branco);
+  position:relative;
+}
+
+/* BG TEXTURE */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse at 10% 20%, rgba(131,171,51,.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 80%, rgba(244,137,167,.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(18,52,13,.6) 0%, transparent 80%);
+  pointer-events:none;z-index:0;
+}
+
+/* SETUP SCREEN */
+#setup-screen{
+  position:fixed;inset:0;z-index:1000;
+  background:var(--vf);
+  display:flex;align-items:center;justify-content:center;
+}
+.setup-box{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:20px;padding:40px;
+  width:500px;max-width:90vw;
+}
+.setup-logo{font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--rosa);margin-bottom:8px;}
+.setup-title{font-size:28px;font-weight:300;color:white;margin-bottom:6px;}
+.setup-title strong{font-weight:700;color:var(--vj);}
+.setup-desc{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:28px;line-height:1.6;}
+.setup-label{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:8px;display:block;}
+.setup-input{width:100%;padding:13px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;font-family:'Sora',sans-serif;font-size:13px;color:white;outline:none;margin-bottom:16px;}
+.setup-input:focus{border-color:var(--vj);}
+.setup-input::placeholder{color:rgba(255,255,255,.25);}
+.setup-btn{width:100%;padding:14px;background:var(--vj);color:var(--vf);border:none;border-radius:10px;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;}
+.setup-btn:hover{background:var(--vj2);}
+.setup-note{font-size:11px;color:rgba(255,255,255,.25);margin-top:12px;line-height:1.6;}
+
+/* MAIN PANEL */
+#panel{
+  position:relative;z-index:1;
+  width:100vw;height:100vh;
+  display:grid;
+  grid-template-rows:64px 1fr;
+  overflow:hidden;
+}
+
+/* TOPBAR */
+.tv-top{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;
+  border-bottom:1px solid var(--border);
+  background:rgba(18,52,13,.4);
+  backdrop-filter:blur(10px);
+}
+.tv-brand{display:flex;align-items:center;gap:16px;}
+.tv-brand-dot{width:8px;height:8px;border-radius:50%;background:var(--vj);box-shadow:0 0 12px var(--vj);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.tv-brand-name{font-size:15px;font-weight:700;letter-spacing:.5px;}
+.tv-brand-name span{font-weight:300;color:rgba(255,255,255,.4);margin-left:6px;font-size:13px;}
+.tv-clock{font-size:13px;font-weight:300;color:rgba(255,255,255,.5);}
+.tv-clock strong{font-weight:600;color:white;font-size:16px;}
+.tv-controls{display:flex;align-items:center;gap:10px;}
+.tv-btn{padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:rgba(255,255,255,.5);font-family:'Sora',sans-serif;font-size:11px;cursor:pointer;transition:all .2s;}
+.tv-btn:hover{background:rgba(255,255,255,.08);color:white;}
+.tv-btn.active{background:var(--vj);color:var(--vf);border-color:var(--vj);font-weight:600;}
+.live-badge{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--rosa);padding:4px 10px;border-radius:20px;background:rgba(244,137,167,.1);border:1px solid rgba(244,137,167,.2);}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--rosa);animation:pulse 1s infinite;}
+
+/* GRID */
+.tv-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 280px;
+  grid-template-rows:1fr 1fr 1fr;
+  gap:12px;
+  padding:16px;
+  overflow:hidden;
+}
+
+/* CARDS */
+.tv-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:20px 22px;
+  cursor:pointer;
+  transition:all .25s;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  position:relative;
+}
+.tv-card:hover{background:var(--card-hover);border-color:rgba(255,255,255,.15);transform:scale(1.01);}
+.tv-card.span2{grid-column:span 2;}
+.tv-card.span-row2{grid-row:span 2;}
+.tv-card.rosa-accent{border-color:rgba(244,137,167,.2);}
+.tv-card.green-accent{border-color:rgba(131,171,51,.2);}
+
+.card-label{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:8px;}
+.card-value{font-size:42px;font-weight:700;line-height:1;margin-bottom:4px;}
+.card-value.rosa{color:var(--rosa);}
+.card-value.green{color:var(--vj);}
+.card-value.white{color:white;}
+.card-value.sm{font-size:28px;}
+.card-sub{font-size:11px;color:rgba(255,255,255,.35);}
+.card-story{font-size:13px;color:rgba(255,255,255,.6);line-height:1.5;margin-top:8px;font-weight:300;}
+.card-story strong{color:var(--vj3);font-weight:600;}
+.card-icon{position:absolute;right:16px;top:16px;font-size:24px;opacity:.2;}
+.card-trend{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;margin-top:8px;}
+.card-trend.up{background:rgba(131,171,51,.15);color:var(--vj3);}
+.card-trend.down{background:rgba(244,137,167,.15);color:var(--rosa2);}
+.card-trend.neutral{background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);}
+
+/* MINI BAR */
+.mini-bars{display:flex;align-items:flex-end;gap:3px;height:48px;margin-top:auto;padding-top:10px;}
+.mini-bar{flex:1;border-radius:3px 3px 0 0;transition:height .5s ease;min-height:3px;}
+.mini-bar.today{background:var(--vj);box-shadow:0 0 8px rgba(131,171,51,.4);}
+.mini-bar.past{background:rgba(255,255,255,.12);}
+
+/* LIVE FEED */
+.live-feed{display:flex;flex-direction:column;gap:6px;margin-top:8px;flex:1;overflow:hidden;}
+.feed-item{display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,.04);border-radius:8px;border-left:2px solid var(--vj);animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.feed-time{font-size:10px;color:rgba(255,255,255,.35);flex-shrink:0;}
+.feed-name{font-size:12px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.feed-val{font-size:12px;font-weight:700;color:var(--vj);flex-shrink:0;}
+
+/* PAY DOTS */
+.pay-row{display:flex;align-items:center;gap:8px;margin-top:6px;}
+.pay-item{display:flex;align-items:center;gap:5px;flex:1;}
+.pay-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.pay-info{flex:1;}
+.pay-name{font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;}
+.pay-pct{font-size:16px;font-weight:700;}
+
+/* INITIATIVES */
+.init-list{display:flex;flex-direction:column;gap:6px;margin-top:8px;flex:1;overflow:hidden;}
+.init-item{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;background:rgba(255,255,255,.03);border-radius:8px;}
+.init-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.init-text{font-size:11px;color:rgba(255,255,255,.55);line-height:1.4;flex:1;}
+.init-text strong{color:rgba(255,255,255,.85);display:block;font-size:12px;margin-bottom:2px;}
+.init-status{font-size:9px;padding:2px 7px;border-radius:10px;flex-shrink:0;}
+
+/* SIDE COLUMN */
+.side-col{grid-row:1/-1;display:flex;flex-direction:column;gap:12px;}
+
+/* HEATMAP MINI */
+.mini-heatmap{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;margin-top:8px;}
+.mh-cell{height:14px;border-radius:2px;}
+
+/* DONUT */
+.donut-wrap{display:flex;align-items:center;gap:12px;margin-top:8px;}
+.donut-legend{flex:1;display:flex;flex-direction:column;gap:5px;}
+.dl-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;}
+.dl-dot{width:6px;height:6px;border-radius:50%;margin-right:6px;flex-shrink:0;}
+.dl-label{display:flex;align-items:center;color:rgba(255,255,255,.5);}
+.dl-val{font-weight:600;color:white;}
+
+/* INSTAGRAM / GOOGLE placeholders */
+.social-row{display:flex;gap:8px;margin-top:8px;}
+.social-item{flex:1;background:rgba(255,255,255,.04);border-radius:8px;padding:8px;text-align:center;}
+.social-num{font-size:18px;font-weight:700;}
+.social-lbl{font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+
+/* MODAL DETAIL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,30,10,.85);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#1a2e1a;border:1px solid rgba(131,171,51,.2);border-radius:20px;padding:36px;width:700px;max-width:90vw;max-height:85vh;overflow-y:auto;position:relative;}
+.modal-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.06);border:none;color:rgba(255,255,255,.5);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.modal-close:hover{color:white;}
+.modal-title{font-size:22px;font-weight:700;color:var(--vj);margin-bottom:6px;}
+.modal-sub{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:24px;}
+.modal-content{font-size:14px;color:rgba(255,255,255,.7);line-height:1.7;}
+
+/* CANVAS */
+canvas{width:100%;height:100%;display:block;}
+
+/* SPINNER */
+.tv-spinner{position:fixed;bottom:20px;right:20px;width:20px;height:20px;border:2px solid rgba(131,171,51,.2);border-top-color:var(--vj);border-radius:50%;animation:spin .7s linear infinite;display:none;z-index:100;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<!-- SETUP -->
+<div id="setup-screen">
+  <div class="setup-box">
+    <div class="setup-logo">War Room</div>
+    <div class="setup-title"><strong>Mayse</strong> Floricultura & Garden</div>
+    <div class="setup-desc">Painel de acompanhamento em tempo real. Configure a URL do Apps Script para começar.</div>
+    <label class="setup-label">URL do Apps Script (Google Sheets)</label>
+    <input class="setup-input" id="setup-url" type="url" placeholder="https://script.google.com/macros/s/...">
+    <button class="setup-btn" onclick="startPanel()">Iniciar painel →</button>
+    <div class="setup-note">
+      ℹ️ A mesma URL usada no app de vendas e no dashboard.<br>
+      Certifique-se de ter a função <strong>doGet</strong> no Apps Script.
+    </div>
+  </div>
+</div>
+
+<!-- PANEL -->
+<div id="panel" style="display:none;">
+
+  <!-- TOP -->
+  <div class="tv-top">
+    <div class="tv-brand">
+      <div class="tv-brand-dot"></div>
+      <div class="tv-brand-name">Mayse <span>Floricultura & Garden</span></div>
+      <div class="live-badge"><div class="live-dot"></div> AO VIVO</div>
+    </div>
+    <div class="tv-clock">
+      <span id="clock-date"></span> &nbsp;·&nbsp; <strong id="clock-time"></strong>
+    </div>
+    <div class="tv-controls">
+      <button class="tv-btn active" id="btn-auto" onclick="toggleAuto()">↻ Auto 2min</button>
+      <button class="tv-btn" onclick="loadData()">Atualizar agora</button>
+      <button class="tv-btn" onclick="resetSetup()">⚙</button>
+    </div>
+  </div>
+
+  <!-- GRID -->
+  <div class="tv-grid">
+
+    <!-- 1. FATURAMENTO HOJE -->
+    <div class="tv-card green-accent" onclick="openModal('fat')">
+      <div class="card-icon">💰</div>
+      <div class="card-label">Faturamento hoje</div>
+      <div class="card-value green" id="fat-hoje">—</div>
+      <div class="card-sub" id="fat-hoje-sub">carregando…</div>
+      <div class="card-trend neutral" id="fat-trend">— vs ontem</div>
+      <div class="mini-bars" id="mini-bars-fat"></div>
+    </div>
+
+    <!-- 2. VENDAS HOJE -->
+    <div class="tv-card" onclick="openModal('vendas')">
+      <div class="card-icon">🛒</div>
+      <div class="card-label">Vendas hoje</div>
+      <div class="card-value white" id="vendas-hoje">—</div>
+      <div class="card-sub" id="vendas-hoje-sub">carregando…</div>
+      <div class="card-trend neutral" id="vendas-trend">— vs ontem</div>
+      <div class="mini-bars" id="mini-bars-vendas"></div>
+    </div>
+
+    <!-- 3. TICKET MÉDIO -->
+    <div class="tv-card" onclick="openModal('ticket')">
+      <div class="card-icon">🎯</div>
+      <div class="card-label">Ticket médio hoje</div>
+      <div class="card-value white sm" id="ticket-hoje">—</div>
+      <div class="card-sub" id="ticket-sub">por venda</div>
+      <div class="card-story" id="story-ticket"></div>
+    </div>
+
+    <!-- SIDE COLUMN (span 3 rows) -->
+    <div class="side-col">
+
+      <!-- ENCOMENDAS -->
+      <div class="tv-card rosa-accent" style="flex:1;" onclick="openModal('encomendas')">
+        <div class="card-label">Encomendas pendentes</div>
+        <div class="card-value rosa sm" id="enc-count">—</div>
+        <div class="card-sub" id="enc-sub">no período</div>
+        <div class="live-feed" id="enc-feed"></div>
+      </div>
+
+      <!-- INICIATIVAS -->
+      <div class="tv-card" style="flex:2;" onclick="openModal('iniciativas')">
+        <div class="card-label">🚀 Iniciativas</div>
+        <div class="init-list" id="init-list">
+          <div style="font-size:11px;color:rgba(255,255,255,.25);">carregando…</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 4. LIVE FEED VENDAS (span 2 cols) -->
+    <div class="tv-card span2" onclick="openModal('feed')">
+      <div class="card-label">📡 Vendas em tempo real — hoje</div>
+      <div class="live-feed" id="live-feed"></div>
+    </div>
+
+    <!-- 5. FORMAS DE PAGAMENTO -->
+    <div class="tv-card" onclick="openModal('pagamentos')">
+      <div class="card-label">Formas de pagamento — hoje</div>
+      <div class="donut-wrap">
+        <svg id="donut-svg" width="80" height="80" viewBox="0 0 80 80"></svg>
+        <div class="donut-legend" id="donut-legend"></div>
+      </div>
+    </div>
+
+    <!-- 6. EVOLUÇÃO 30 DIAS -->
+    <div class="tv-card span2" onclick="openModal('evolucao')">
+      <div class="card-label">Evolução — últimos 30 dias</div>
+      <div style="height:100px;margin-top:8px;"><canvas id="canvas-30d"></canvas></div>
+    </div>
+
+    <!-- 7. HORÁRIOS DE PICO -->
+    <div class="tv-card" onclick="openModal('horarios')">
+      <div class="card-label">Horários de pico — hoje</div>
+      <div class="mini-heatmap" id="mini-heatmap"></div>
+      <div class="card-story" id="story-pico" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- 8. SOCIAL (Instagram + Google placeholders) -->
+    <div class="tv-card rosa-accent" onclick="openModal('social')">
+      <div class="card-label">📱 Marketing digital</div>
+      <div class="social-row" id="social-row">
+        <div class="social-item">
+          <div class="social-num" style="color:var(--rosa);" id="ig-followers">—</div>
+          <div class="social-lbl">Seguidores IG</div>
+        </div>
+        <div class="social-item">
+          <div class="social-num" style="color:#4285F4;" id="g-visits">—</div>
+          <div class="social-lbl">Visitas Google</div>
+        </div>
+      </div>
+      <div class="card-story" style="margin-top:8px;font-size:11px;color:rgba(255,255,255,.25);">
+        Integração Instagram e Google em breve
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL DETAIL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">×</button>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-sub" id="modal-sub"></div>
+    <div class="modal-content" id="modal-content"></div>
+  </div>
+</div>
+
+<div class="tv-spinner" id="tv-spinner"></div>
+
+<script>
+// ── STATE ──
+let webhookUrl = localStorage.getItem('mayse_tv_webhook') || '';
+let vendas = [], encomendas = [], iniciativas = [];
+let autoInterval = null;
+let autoOn = true;
+const AUTO_INTERVAL_MS = 2 * 60 * 1000;
+
+// ── INIT ──
+if(webhookUrl) { startPanel(true); }
+startClock();
+
+function startClock() {
+  setInterval(() => {
+    const now = new Date();
+    document.getElementById('clock-time').textContent =
+      now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    document.getElementById('clock-date').textContent =
+      now.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
+  }, 1000);
+}
+
+function startPanel(skipSetup) {
+  const url = skipSetup ? webhookUrl : document.getElementById('setup-url').value.trim();
+  if(!url.startsWith('https://script.google.com')) { alert('URL inválida'); return; }
+  webhookUrl = url;
+  localStorage.setItem('mayse_tv_webhook', url);
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('panel').style.display = 'grid';
+  loadData();
+  if(autoOn) startAuto();
+}
+
+function resetSetup() {
+  localStorage.removeItem('mayse_tv_webhook');
+  location.reload();
+}
+
+// ── AUTO REFRESH ──
+function toggleAuto() {
+  autoOn = !autoOn;
+  const btn = document.getElementById('btn-auto');
+  if(autoOn) { startAuto(); btn.classList.add('active'); btn.textContent='↻ Auto 2min'; }
+  else { clearInterval(autoInterval); btn.classList.remove('active'); btn.textContent='Auto: off'; }
+}
+function startAuto() {
+  clearInterval(autoInterval);
+  autoInterval = setInterval(loadData, AUTO_INTERVAL_MS);
+}
+
+// ── LOAD DATA ──
+async function loadData() {
+  const spinner = document.getElementById('tv-spinner');
+  spinner.style.display = 'block';
+  try {
+    const [rV, rE, rI] = await Promise.all([
+      fetch(webhookUrl+'?action=read&sheet=Vendas').then(r=>r.json()),
+      fetch(webhookUrl+'?action=read&sheet=Encomendas').then(r=>r.json()).catch(()=>({data:[]})),
+      fetch(webhookUrl+'?action=read&sheet=Iniciativas').then(r=>r.json()).catch(()=>({data:[]}))
+    ]);
+    vendas      = rV.data || [];
+    encomendas  = rE.data || [];
+    iniciativas = rI.data || [];
+    renderAll();
+  } catch(e) {
+    console.error(e);
+  }
+  spinner.style.display = 'none';
+}
+
+// ── HELPERS ──
+function hoje() { return new Date().toLocaleDateString('pt-BR'); }
+function ontem() { const d=new Date(); d.setDate(d.getDate()-1); return d.toLocaleDateString('pt-BR'); }
+function fmt(n) { return 'R$ '+parseFloat(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtK(n) { n=parseFloat(n||0); return n>=1000?(n/1000).toFixed(1)+'k':n.toFixed(0); }
+function vendasDia(dia) { return vendas.filter(r=>r.Data===dia); }
+function fatDia(dia) { return vendasDia(dia).reduce((s,r)=>s+parseFloat(r.Total||0),0); }
+function last30() {
+  const days=[]; const d=new Date();
+  for(let i=29;i>=0;i--){ const x=new Date(d); x.setDate(x.getDate()-i); days.push(x.toLocaleDateString('pt-BR')); }
+  return days;
+}
+
+// ── RENDER ──
+function renderAll() {
+  renderFat();
+  renderVendas();
+  renderTicket();
+  renderLiveFeed();
+  renderPagamentos();
+  renderEvolucao();
+  renderHorarios();
+  renderEncomendas();
+  renderIniciativas();
+}
+
+function renderFat() {
+  const fatH = fatDia(hoje());
+  const fatO = fatDia(ontem());
+  document.getElementById('fat-hoje').textContent = fmt(fatH);
+  document.getElementById('fat-hoje-sub').textContent = `em ${vendasDia(hoje()).length} venda${vendasDia(hoje()).length!==1?'s':''}`;
+
+  const diff = fatO > 0 ? ((fatH-fatO)/fatO*100) : null;
+  const trendEl = document.getElementById('fat-trend');
+  if(diff !== null) {
+    trendEl.textContent = (diff>=0?'▲':'▼')+' '+Math.abs(diff).toFixed(0)+'% vs ontem';
+    trendEl.className = 'card-trend '+(diff>=0?'up':'down');
+  }
+
+  // Mini bars 7 days
+  const days7 = last30().slice(-7);
+  const vals7 = days7.map(d=>fatDia(d));
+  const max7 = Math.max(...vals7,1);
+  document.getElementById('mini-bars-fat').innerHTML = days7.map((d,i)=>{
+    const h = Math.max(6,(vals7[i]/max7*44));
+    const isToday = d===hoje();
+    return `<div class="mini-bar ${isToday?'today':'past'}" style="height:${h}px" title="${d}: ${fmt(vals7[i])}"></div>`;
+  }).join('');
+}
+
+function renderVendas() {
+  const nH = vendasDia(hoje()).length;
+  const nO = vendasDia(ontem()).length;
+  document.getElementById('vendas-hoje').textContent = nH;
+  document.getElementById('vendas-hoje-sub').textContent = nO > 0 ? `ontem foram ${nO}` : 'primeiras vendas do dia';
+
+  const diff = nO > 0 ? ((nH-nO)/nO*100) : null;
+  const trendEl = document.getElementById('vendas-trend');
+  if(diff !== null) {
+    trendEl.textContent = (diff>=0?'▲':'▼')+' '+Math.abs(diff).toFixed(0)+'% vs ontem';
+    trendEl.className = 'card-trend '+(diff>=0?'up':'down');
+  }
+
+  const days7 = last30().slice(-7);
+  const vals7 = days7.map(d=>vendasDia(d).length);
+  const max7 = Math.max(...vals7,1);
+  document.getElementById('mini-bars-vendas').innerHTML = days7.map((d,i)=>{
+    const h = Math.max(4,(vals7[i]/max7*44));
+    return `<div class="mini-bar ${d===hoje()?'today':'past'}" style="height:${h}px" title="${d}: ${vals7[i]} vendas"></div>`;
+  }).join('');
+}
+
+function renderTicket() {
+  const vh = vendasDia(hoje());
+  const ticket = vh.length > 0 ? fatDia(hoje())/vh.length : 0;
+  document.getElementById('ticket-hoje').textContent = fmt(ticket);
+  const max7 = Math.max(...last30().slice(-7).map(d=>fatDia(d)/Math.max(vendasDia(d).length,1)),1);
+  const pct = Math.round(ticket/max7*100);
+  document.getElementById('story-ticket').innerHTML = ticket > 0
+    ? `Cada cliente gasta em média <strong>${fmt(ticket)}</strong> por visita hoje.`
+    : 'Aguardando primeiras vendas do dia.';
+}
+
+function renderLiveFeed() {
+  const vh = vendasDia(hoje()).slice().reverse().slice(0,6);
+  const el = document.getElementById('live-feed');
+  if(!vh.length) {
+    el.innerHTML = '<div style="font-size:12px;color:rgba(255,255,255,.2);padding:10px 0;">Nenhuma venda ainda hoje…</div>';
+    return;
+  }
+  el.innerHTML = vh.map(r=>`
+    <div class="feed-item">
+      <div class="feed-time">${r.Hora||'—'}</div>
+      <div class="feed-name">${r.Cliente||'—'} · ${(r.Produtos||'').split('(')[0].split('|')[0].trim()}</div>
+      <div class="feed-val">${fmt(r.Total)}</div>
+    </div>`).join('');
+}
+
+function renderPagamentos() {
+  const vh = vendasDia(hoje());
+  let din=0,pix=0,cred=0,deb=0;
+  vh.forEach(r=>{ din+=parseFloat(r.Dinheiro||0); pix+=parseFloat(r.Pix||0); cred+=parseFloat(r.Credito||0); deb+=parseFloat(r.Debito||0); });
+  const total = din+pix+cred+deb || 1;
+  const items = [{l:'Pix',v:pix,c:'#83AB33'},{l:'Dinheiro',v:din,c:'#a8cc44'},{l:'Crédito',v:cred,c:'#F489A7'},{l:'Débito',v:deb,c:'#f9b8cb'}].filter(i=>i.v>0);
+
+  // Donut SVG
+  const svg = document.getElementById('donut-svg');
+  const cx=40,cy=40,r=32,ri=20;
+  let html=''; let angle=-Math.PI/2;
+  items.forEach(item=>{
+    const pct=item.v/total;
+    const end=angle+pct*2*Math.PI;
+    const x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle);
+    const x2=cx+r*Math.cos(end),y2=cy+r*Math.sin(end);
+    const xi1=cx+ri*Math.cos(angle),yi1=cy+ri*Math.sin(angle);
+    const xi2=cx+ri*Math.cos(end),yi2=cy+ri*Math.sin(end);
+    const large=pct>0.5?1:0;
+    html+=`<path d="M${xi1},${yi1} L${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} L${xi2},${yi2} A${ri},${ri} 0 ${large},0 ${xi1},${yi1} Z" fill="${item.c}"/>`;
+    angle=end;
+  });
+  if(!items.length) html=`<circle cx="40" cy="40" r="32" fill="rgba(255,255,255,.05)"/>`;
+  svg.innerHTML=html;
+
+  document.getElementById('donut-legend').innerHTML = items.map(i=>`
+    <div class="dl-row">
+      <span class="dl-label"><span class="dl-dot" style="background:${i.c}"></span>${i.l}</span>
+      <span class="dl-val">${Math.round(i.v/total*100)}%</span>
+    </div>`).join('');
+}
+
+function renderEvolucao() {
+  const days = last30();
+  const vals = days.map(d=>fatDia(d));
+  drawLine30('canvas-30d', days, vals);
+}
+
+function drawLine30(id, labels, vals) {
+  const canvas = document.getElementById(id);
+  const W=canvas.offsetWidth||600, H=canvas.offsetHeight||100;
+  canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  if(!vals.some(v=>v>0)) {
+    ctx.fillStyle='rgba(255,255,255,.15)';
+    ctx.font='12px Sora'; ctx.textAlign='center';
+    ctx.fillText('Sem dados nos últimos 30 dias', W/2, H/2);
+    return;
+  }
+  const pad={t:8,r:8,b:20,l:8};
+  const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
+  const max=Math.max(...vals)*1.1||1;
+
+  const grad=ctx.createLinearGradient(0,pad.t,0,pad.t+cH);
+  grad.addColorStop(0,'rgba(131,171,51,.3)');
+  grad.addColorStop(1,'rgba(131,171,51,.02)');
+  ctx.fillStyle=grad;
+  ctx.beginPath();
+  vals.forEach((v,i)=>{
+    const x=pad.l+(i/(vals.length-1))*cW;
+    const y=pad.t+cH-(v/max)*cH;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.lineTo(pad.l+cW,pad.t+cH); ctx.lineTo(pad.l,pad.t+cH); ctx.closePath(); ctx.fill();
+
+  ctx.strokeStyle='#83AB33'; ctx.lineWidth=2; ctx.lineJoin='round';
+  ctx.beginPath();
+  vals.forEach((v,i)=>{
+    const x=pad.l+(i/(vals.length-1))*cW;
+    const y=pad.t+cH-(v/max)*cH;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  // Today dot
+  const tx=pad.l+cW, ty=pad.t+cH-(vals[vals.length-1]/max)*cH;
+  ctx.fillStyle='white'; ctx.beginPath(); ctx.arc(tx,ty,4,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#83AB33'; ctx.beginPath(); ctx.arc(tx,ty,2.5,0,Math.PI*2); ctx.fill();
+}
+
+function renderHorarios() {
+  const vh = vendasDia(hoje());
+  const byHour={};
+  vh.forEach(r=>{ const h=(r.Hora||'').split(':')[0]; if(h) byHour[h]=(byHour[h]||0)+1; });
+  const max=Math.max(...Object.values(byHour),1);
+  const el=document.getElementById('mini-heatmap');
+  let html='';
+  for(let h=8;h<20;h++){
+    const n=byHour[String(h).padStart(2,'0')]||byHour[String(h)]||0;
+    const intensity=n/max;
+    const bg=n===0?'rgba(255,255,255,.06)':`rgba(131,171,51,${0.15+intensity*.85})`;
+    html+=`<div class="mh-cell" style="background:${bg}" title="${h}h: ${n}"></div>`;
+  }
+  el.innerHTML=html||'<div style="font-size:11px;color:rgba(255,255,255,.2);">Sem vendas hoje</div>';
+
+  const picoHour = Object.entries(byHour).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('story-pico').innerHTML = picoHour
+    ? `Pico às <strong>${picoHour[0]}h</strong> com ${picoHour[1]} venda${picoHour[1]>1?'s':''}`
+    : 'Aguardando vendas…';
+}
+
+function renderEncomendas() {
+  const recentes = encomendas.slice(-5).reverse();
+  document.getElementById('enc-count').textContent = encomendas.length;
+  document.getElementById('enc-sub').textContent = `registrada${encomendas.length!==1?'s':''}`;
+  const el=document.getElementById('enc-feed');
+  if(!recentes.length){ el.innerHTML='<div style="font-size:11px;color:rgba(255,255,255,.2);">Nenhuma encomenda</div>'; return; }
+  el.innerHTML=recentes.map(r=>`
+    <div class="feed-item" style="border-left-color:var(--rosa);">
+      <div class="feed-time">${r.Data||'—'}</div>
+      <div class="feed-name">${r.Cliente||'—'}</div>
+    </div>`).join('');
+}
+
+function renderIniciativas() {
+  const el=document.getElementById('init-list');
+  if(!iniciativas.length){
+    el.innerHTML=`
+      <div class="init-item"><span class="init-dot" style="background:var(--vj)"></span><div class="init-text"><strong>E-commerce</strong>Expansão do canal digital</div></div>
+      <div class="init-item"><span class="init-dot" style="background:var(--rosa)"></span><div class="init-text"><strong>Garden</strong>Expansão para universo garden</div></div>
+      <div class="init-item"><span class="init-dot" style="background:rgba(255,255,255,.3)"></span><div class="init-text"><strong>Instagram</strong>Crescimento orgânico</div></div>
+      <div style="font-size:10px;color:rgba(255,255,255,.2);margin-top:6px;">Adicione uma aba "Iniciativas" no Sheets com colunas: Nome, Descricao, Status</div>`;
+    return;
+  }
+  const colors=['#83AB33','#F489A7','#a0c84a','#f9b8cb','#fff'];
+  el.innerHTML=iniciativas.slice(0,5).map((r,i)=>{
+    const status=r.Status||'planejado';
+    const statusBg=status==='ativo'?'rgba(131,171,51,.2)':status==='concluido'?'rgba(131,171,51,.4)':'rgba(255,255,255,.06)';
+    return `<div class="init-item">
+      <span class="init-dot" style="background:${colors[i%colors.length]}"></span>
+      <div class="init-text"><strong>${r.Nome||'—'}</strong>${r.Descricao||''}</div>
+      <span class="init-status" style="background:${statusBg};color:rgba(255,255,255,.6);">${status}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── MODAL ──
+const modalData = {
+  fat:{ title:'💰 Faturamento — Detalhes', sub:'Evolução do faturamento', fn: ()=>{
+    const days=last30().slice(-7);
+    return '<table style="width:100%;font-size:13px;"><thead><tr><th style="padding:8px;color:rgba(255,255,255,.4);text-align:left;">Data</th><th style="padding:8px;color:rgba(255,255,255,.4);">Vendas</th><th style="padding:8px;color:rgba(255,255,255,.4);">Faturamento</th></tr></thead><tbody>'+
+      days.map(d=>`<tr><td style="padding:8px;border-bottom:1px solid rgba(255,255,255,.06);">${d}</td><td style="padding:8px;border-bottom:1px solid rgba(255,255,255,.06);text-align:center;">${vendasDia(d).length}</td><td style="padding:8px;border-bottom:1px solid rgba(255,255,255,.06);text-align:right;color:#83AB33;font-weight:600;">${fmt(fatDia(d))}</td></tr>`).join('')+
+      '</tbody></table>';
+  }},
+  vendas:{ title:'🛒 Vendas — Detalhes', sub:'Últimas vendas registradas', fn: ()=>{
+    return vendasDia(hoje()).slice().reverse().slice(0,15).map(r=>`
+      <div style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:start;">
+        <div>
+          <div style="font-weight:600;">${r.Cliente||'—'}</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:2px;">${r.Produtos||'—'}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="color:#83AB33;font-weight:700;">${fmt(r.Total)}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.3);">${r.Hora||'—'} · ${r.Operador||'—'}</div>
+        </div>
+      </div>`).join('') || '<div style="color:rgba(255,255,255,.3)">Nenhuma venda hoje</div>';
+  }},
+  pagamentos:{ title:'💳 Pagamentos — Detalhes', sub:'Distribuição do dia', fn: ()=>{
+    const vh=vendasDia(hoje());
+    let din=0,pix=0,cred=0,deb=0,troco=0;
+    vh.forEach(r=>{ din+=parseFloat(r.Dinheiro||0); pix+=parseFloat(r.Pix||0); cred+=parseFloat(r.Credito||0); deb+=parseFloat(r.Debito||0); troco+=parseFloat(r.Troco||0); });
+    return [['Pix',pix,'#83AB33'],['Dinheiro',din,'#a8cc44'],['Crédito',cred,'#F489A7'],['Débito',deb,'#f9b8cb']].map(([l,v,c])=>
+      `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);">
+        <span style="color:${c}">${l}</span><span style="font-weight:700;">${fmt(v)}</span>
+      </div>`).join('') + `<div style="padding:10px 0;color:#c9933a;">Troco devolvido: ${fmt(troco)}</div>`;
+  }},
+  encomendas:{ title:'📋 Encomendas', sub:'Todas as encomendas registradas', fn: ()=>{
+    if(!encomendas.length) return '<div style="color:rgba(255,255,255,.3)">Nenhuma encomenda</div>';
+    return encomendas.slice().reverse().map(r=>`
+      <div style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+          <span style="font-weight:600;">${r.Cliente||'—'}</span>
+          <span style="font-size:12px;color:rgba(255,255,255,.3);">${r.Data||'—'} ${r.Hora||''}</span>
+        </div>
+        <div style="font-size:12px;color:rgba(255,255,255,.5);">${r.Descricao||'—'}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.25);margin-top:2px;">📞 ${r.Telefone||'—'} · 👤 ${r.Operador||'—'}</div>
+      </div>`).join('');
+  }},
+  horarios:{ title:'🕐 Horários de Pico', sub:'Distribuição das vendas por hora', fn: ()=>{
+    const byHour={};
+    vendas.forEach(r=>{ const h=(r.Hora||'').split(':')[0]; if(h) byHour[parseInt(h)]=(byHour[parseInt(h)]||0)+1; });
+    const max=Math.max(...Object.values(byHour),1);
+    return Array.from({length:24},(_,h)=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:5px 0;">
+        <span style="width:28px;font-size:11px;color:rgba(255,255,255,.3);text-align:right;">${String(h).padStart(2,'0')}h</span>
+        <div style="flex:1;height:8px;background:rgba(255,255,255,.06);border-radius:4px;">
+          <div style="height:100%;width:${((byHour[h]||0)/max*100).toFixed(0)}%;background:#83AB33;border-radius:4px;"></div>
+        </div>
+        <span style="width:24px;font-size:11px;color:rgba(255,255,255,.4);">${byHour[h]||0}</span>
+      </div>`).join('');
+  }},
+  evolucao:{ title:'📈 Evolução — 30 dias', sub:'Faturamento e vendas por dia', fn: ()=>{
+    return last30().slice().reverse().slice(0,30).map(d=>{
+      const fat=fatDia(d), n=vendasDia(d).length;
+      const max=Math.max(...last30().map(x=>fatDia(x)),1);
+      const pct=fat/max*100;
+      return `<div style="display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);">
+        <span style="width:60px;font-size:11px;color:rgba(255,255,255,.3);">${d}</span>
+        <div style="flex:1;height:8px;background:rgba(255,255,255,.06);border-radius:4px;">
+          <div style="height:100%;width:${pct.toFixed(0)}%;background:${d===hoje()?'#F489A7':'#83AB33'};border-radius:4px;"></div>
+        </div>
+        <span style="width:80px;font-size:11px;font-weight:600;color:${d===hoje()?'#F489A7':'#83AB33'};text-align:right;">${fmt(fat)}</span>
+        <span style="width:30px;font-size:11px;color:rgba(255,255,255,.3);text-align:right;">${n}x</span>
+      </div>`;
+    }).join('');
+  }},
+  iniciativas:{ title:'🚀 Iniciativas', sub:'Configure na aba "Iniciativas" do Google Sheets', fn: ()=>{
+    if(!iniciativas.length) return `<div style="color:rgba(255,255,255,.4);line-height:1.8;">
+      <p>Crie uma aba chamada <strong style="color:#83AB33">Iniciativas</strong> na sua planilha com as colunas:</p>
+      <ul style="margin:12px 0 0 20px;font-size:13px;">
+        <li><strong>Nome</strong> — nome curto da iniciativa</li>
+        <li><strong>Descricao</strong> — descrição em uma linha</li>
+        <li><strong>Status</strong> — planejado / ativo / concluido</li>
+      </ul>
+    </div>`;
+    return iniciativas.map(r=>`
+      <div style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <span style="font-weight:600;font-size:15px;">${r.Nome||'—'}</span>
+          <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(131,171,51,.15);color:#83AB33;">${r.Status||'—'}</span>
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,.5);">${r.Descricao||''}</div>
+      </div>`).join('');
+  }},
+  social:{ title:'📱 Marketing Digital', sub:'Integrações em breve', fn: ()=>
+    `<div style="color:rgba(255,255,255,.5);line-height:1.8;">
+      <p style="margin-bottom:16px;">As integrações com Instagram e Google Analytics estão planejadas para a próxima versão.</p>
+      <p><strong style="color:#F489A7">Instagram</strong> — seguidores, alcance, engajamento, posts recentes</p>
+      <p style="margin-top:8px;"><strong style="color:#4285F4">Google</strong> — visitas ao site, origem do tráfego, palavras-chave</p>
+    </div>`
+  },
+  feed:{ title:'📡 Feed ao vivo', sub:'Todas as vendas de hoje', fn: ()=>{
+    return vendasDia(hoje()).slice().reverse().map(r=>`
+      <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px;">
+        <div>
+          <span style="font-weight:600;">${r.Cliente||'—'}</span>
+          <span style="color:rgba(255,255,255,.35);font-size:12px;margin-left:8px;">${r.Hora||'—'}</span>
+        </div>
+        <span style="color:#83AB33;font-weight:700;">${fmt(r.Total)}</span>
+      </div>`).join('') || '<div style="color:rgba(255,255,255,.3)">Nenhuma venda hoje</div>';
+  }},
+  ticket:{ title:'🎯 Ticket Médio', sub:'Análise por período', fn: ()=>{
+    const days=last30().slice(-7);
+    return days.map(d=>{
+      const n=vendasDia(d).length, fat=fatDia(d);
+      const t=n>0?fat/n:0;
+      return `<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);">
+        <span style="color:rgba(255,255,255,.5);">${d}</span>
+        <span>${n} venda${n!==1?'s':''}</span>
+        <span style="color:#83AB33;font-weight:600;">${fmt(t)}</span>
+      </div>`;
+    }).join('');
+  }}
+};
+
+function openModal(key) {
+  const d = modalData[key];
+  if(!d) return;
+  document.getElementById('modal-title').textContent = d.title;
+  document.getElementById('modal-sub').textContent = d.sub;
+  document.getElementById('modal-content').innerHTML = d.fn();
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(e) {
+  if(e.target===document.getElementById('modal')) document.getElementById('modal').classList.remove('open');
+}
+</script>
+</body>
+</html>
