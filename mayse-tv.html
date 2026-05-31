@@ -426,15 +426,21 @@ async function loadData() {
 }
 
 // ── HELPERS ──
-function hoje() { return new Date().toLocaleDateString('pt-BR'); }
-function ontem() { const d=new Date(); d.setDate(d.getDate()-1); return d.toLocaleDateString('pt-BR'); }
+function fmtDateBR(d) {
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const yyyy = d.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+}
+function hoje() { return fmtDateBR(new Date()); }
+function ontem() { const d=new Date(); d.setDate(d.getDate()-1); return fmtDateBR(d); }
 function fmt(n) { return 'R$ '+parseFloat(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function fmtK(n) { n=parseFloat(n||0); return n>=1000?(n/1000).toFixed(1)+'k':n.toFixed(0); }
-function vendasDia(dia) { return vendas.filter(r=>r.Data===dia); }
+function vendasDia(dia) { return vendas.filter(r=>String(r.Data||'').trim()===dia); }
 function fatDia(dia) { return vendasDia(dia).reduce((s,r)=>s+parseFloat(r.Total||0),0); }
 function last30() {
   const days=[]; const d=new Date();
-  for(let i=29;i>=0;i--){ const x=new Date(d); x.setDate(x.getDate()-i); days.push(x.toLocaleDateString('pt-BR')); }
+  for(let i=29;i>=0;i--){ const x=new Date(d); x.setDate(x.getDate()-i); days.push(fmtDateBR(x)); }
   return days;
 }
 
