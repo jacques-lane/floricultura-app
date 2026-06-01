@@ -767,12 +767,13 @@ function renderPagamentos(filtro) {
     else{pendVal+=v;pendN++;}
   });
 
-  document.getElementById('pg-pendente').textContent=fmt(pendVal);
-  document.getElementById('pg-pendente-n').textContent=`${pendN} conta${pendN!==1?'s':''}`;
-  document.getElementById('pg-vencido').textContent=fmt(vencVal);
-  document.getElementById('pg-vencido-n').textContent=`${vencN} em atraso`;
-  document.getElementById('pg-pago').textContent=fmt(pagoVal);
-  document.getElementById('pg-pago-n').textContent=`${pagoN} paga${pagoN!==1?'s':''}`;
+  const setPg=(id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
+  setPg('pg-pendente',fmt(pendVal));
+  setPg('pg-pendente-n',`${pendN} conta${pendN!==1?'s':''}`);
+  setPg('pg-vencido',fmt(vencVal));
+  setPg('pg-vencido-n',`${vencN} em atraso`);
+  setPg('pg-pago',fmt(pagoVal));
+  setPg('pg-pago-n',`${pagoN} paga${pagoN!==1?'s':''}`);
 
   const filtrado=processado.filter(r=> filtro==='todos'||r._status===filtro||r._status.includes(filtro)).sort((a,b)=>{ if(!a._d) return 1; if(!b._d) return -1; return a._d-b._d; });
 
@@ -848,10 +849,14 @@ function renderEncomendas() {
     if(counts[s]!==undefined) counts[s]++;
     else counts.pendente++;
   });
-  document.getElementById('enc-pendente').textContent   = counts.pendente;
-  document.getElementById('enc-confirmada').textContent = counts.confirmada;
-  document.getElementById('enc-entregue').textContent   = counts.entregue;
-  document.getElementById('enc-cancelada').textContent  = counts.cancelada;
+  const elP=document.getElementById('enc-pendente');
+  const elC=document.getElementById('enc-confirmada');
+  const elE=document.getElementById('enc-entregue');
+  const elX=document.getElementById('enc-cancelada');
+  if(elP) elP.textContent = counts.pendente;
+  if(elC) elC.textContent = counts.confirmada;
+  if(elE) elE.textContent = counts.entregue;
+  if(elX) elX.textContent = counts.cancelada;
 
   const badgeMap = {pendente:'pendente',confirmada:'confirmada',entregue:'entregue',cancelada:'vencido'};
   const labelMap = {pendente:'Pendente',confirmada:'Confirmada',entregue:'Entregue',cancelada:'Cancelada'};
