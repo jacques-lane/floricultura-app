@@ -7,26 +7,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --vf: #12340D;
-  --vj: #83AB33;
-  --vj2: #a0c84a;
-  --rosa: #F489A7;
-  --rosa2: #f9b8cb;
-  --cream: #F7F5F0;
-  --branco: #FEFEFE;
-  --grafite: #1A1C19;
-  --mid: #555;
-  --light: #999;
-  --border: #E8E4DC;
-  --card: #FFFFFF;
-  --shadow: 0 2px 20px rgba(18,52,13,.07);
-  --shadow-md: 0 4px 32px rgba(18,52,13,.12);
+  --vf:#12340D; --vj:#83AB33; --vj2:#a0c84a;
+  --rosa:#F489A7; --rosa2:#f9b8cb;
+  --cream:#F7F5F0; --branco:#FEFEFE;
+  --grafite:#1A1C19; --mid:#555; --light:#999;
+  --border:#E8E4DC; --card:#FFFFFF;
+  --shadow:0 2px 20px rgba(18,52,13,.07);
+  --gold:#c9933a; --gold-pale:#fdf6ec;
+  --red:#e53935; --red-pale:#ffebee;
+  --radius:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Sora',sans-serif;background:var(--cream);color:var(--grafite);min-height:100vh;}
 
 /* SIDEBAR */
-.sidebar{position:fixed;top:0;left:0;width:220px;height:100vh;background:var(--vf);display:flex;flex-direction:column;z-index:100;padding:0;}
+.sidebar{position:fixed;top:0;left:0;width:220px;height:100vh;background:var(--vf);display:flex;flex-direction:column;z-index:100;transition:transform .3s ease;}
 .sidebar-brand{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,.06);}
 .brand-label{font-size:9px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--rosa);margin-bottom:6px;}
 .brand-name{font-size:18px;font-weight:300;color:white;line-height:1.2;}
@@ -37,11 +32,10 @@ body{font-family:'Sora',sans-serif;background:var(--cream);color:var(--grafite);
 .nav-item.active{color:white;background:rgba(131,171,51,.2);border-left:3px solid var(--vj);}
 .nav-item .ni{font-size:16px;width:20px;text-align:center;}
 .sidebar-footer{padding:16px 24px;border-top:1px solid rgba(255,255,255,.06);font-size:11px;color:rgba(255,255,255,.25);}
-
-/* MAIN */
-.main{margin-left:220px;min-height:100vh;padding:0;}
-
-/* TOP BAR */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99;}
+.sidebar-overlay.show{display:block;}
+.hamburger{display:none;background:none;border:none;color:var(--vf);font-size:22px;cursor:pointer;padding:4px;}
+.main{margin-left:220px;min-height:100vh;}
 .topbar{background:var(--branco);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
 .topbar-title{font-size:20px;font-weight:600;color:var(--vf);}
 .topbar-title span{font-weight:300;color:var(--light);margin-left:8px;font-size:14px;}
@@ -55,11 +49,10 @@ body{font-family:'Sora',sans-serif;background:var(--cream);color:var(--grafite);
 .spinner-sm{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:none;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* CONTENT */
 .content{padding:28px 32px;}
 
-/* SETUP CARD */
-.setup-card{background:var(--branco);border:1.5px solid var(--border);border-radius:16px;padding:28px;margin-bottom:24px;}
+/* SETUP */
+.setup-card{background:var(--branco);border:1.5px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:24px;}
 .setup-title{font-size:15px;font-weight:600;color:var(--vf);margin-bottom:6px;}
 .setup-desc{font-size:13px;color:var(--mid);margin-bottom:16px;line-height:1.5;}
 .setup-row{display:flex;gap:10px;align-items:center;}
@@ -68,29 +61,30 @@ body{font-family:'Sora',sans-serif;background:var(--cream);color:var(--grafite);
 .btn-save{padding:11px 20px;background:var(--vf);color:white;border:none;border-radius:8px;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
 .connected-badge{display:inline-flex;align-items:center;gap:6px;background:#f0f8e8;border:1px solid #c5dfa0;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:500;color:var(--vf);}
 
-/* KPI CARDS */
+/* KPI */
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
-.kpi-card{background:var(--card);border-radius:14px;padding:20px;box-shadow:var(--shadow);border:1px solid var(--border);position:relative;overflow:hidden;}
+.kpi-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border:1px solid var(--border);position:relative;overflow:hidden;}
 .kpi-card::after{content:'';position:absolute;right:-8px;bottom:-8px;width:50px;height:50px;border-radius:50%;opacity:.07;}
 .kpi-card.green::after{background:var(--vj);}
 .kpi-card.rosa::after{background:var(--rosa);}
 .kpi-card.dark::after{background:var(--vf);}
+.kpi-card.gold::after{background:var(--gold);}
 .kpi-label{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--light);margin-bottom:10px;}
 .kpi-value{font-size:26px;font-weight:700;color:var(--vf);line-height:1;}
 .kpi-value.rosa{color:var(--rosa);}
+.kpi-value.gold{color:var(--gold);}
 .kpi-sub{font-size:11px;color:var(--light);margin-top:6px;}
 .kpi-icon{position:absolute;top:18px;right:18px;font-size:20px;opacity:.4;}
 
-/* CHARTS GRID */
+/* CHARTS */
 .charts-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px;}
+.charts-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
 .charts-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px;}
-
-/* CHART CARD */
-.chart-card{background:var(--card);border-radius:14px;padding:22px;box-shadow:var(--shadow);border:1px solid var(--border);}
+.chart-card{background:var(--card);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:0;}
+.chart-card.mb{margin-bottom:24px;}
 .chart-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;}
 .chart-title{font-size:13px;font-weight:600;color:var(--vf);}
 .chart-sub{font-size:11px;color:var(--light);margin-top:2px;}
-.chart-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;background:var(--cream);color:var(--mid);}
 
 /* BAR CHART */
 .bar-chart{display:flex;flex-direction:column;gap:8px;}
@@ -101,11 +95,11 @@ body{font-family:'Sora',sans-serif;background:var(--cream);color:var(--grafite);
 .bar-fill.green{background:var(--vj);}
 .bar-fill.rosa{background:var(--rosa);}
 .bar-fill.dark{background:var(--vf);}
-.bar-val{font-size:11px;font-weight:600;color:var(--grafite);width:60px;text-align:right;flex-shrink:0;}
+.bar-fill.gold{background:var(--gold);}
+.bar-val{font-size:11px;font-weight:600;color:var(--grafite);width:70px;text-align:right;flex-shrink:0;}
 
 /* LINE CHART */
 .line-chart-wrap{position:relative;height:160px;}
-canvas.line-canvas{width:100%;height:100%;}
 
 /* PIE */
 .pie-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;}
@@ -125,19 +119,34 @@ canvas.line-canvas{width:100%;height:100%;}
 /* TABLE */
 .data-table{width:100%;border-collapse:collapse;}
 .data-table th{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--light);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
-.data-table td{font-size:13px;padding:12px 14px;border-bottom:1px solid var(--border);color:var(--grafite);}
+.data-table td{font-size:13px;padding:11px 14px;border-bottom:1px solid var(--border);color:var(--grafite);}
 .data-table tr:last-child td{border-bottom:none;}
 .data-table tr:hover td{background:#fafaf8;}
-.badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;}
-.badge.pending{background:#fff8e6;color:#7a5c00;}
-.badge.green{background:#f0f8e8;color:var(--vf);}
+.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;}
+.badge.pendente{background:#fff8e6;color:#7a5c00;}
+.badge.pago{background:#f0f8e8;color:var(--vf);}
+.badge.vencido{background:var(--red-pale);color:var(--red);}
+.badge.hoje{background:#fde8ef;color:#c0516f;}
+
+/* TIMELINE */
+.timeline{display:flex;flex-direction:column;gap:0;}
+.tl-item{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--border);position:relative;}
+.tl-item:last-child{border-bottom:none;}
+.tl-dot-wrap{display:flex;flex-direction:column;align-items:center;gap:0;flex-shrink:0;width:12px;margin-top:4px;}
+.tl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.tl-line{width:2px;flex:1;background:var(--border);margin-top:4px;}
+.tl-body{flex:1;}
+.tl-date{font-size:10px;font-weight:600;color:var(--light);letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px;}
+.tl-desc{font-size:13px;font-weight:500;color:var(--grafite);}
+.tl-cat{font-size:11px;color:var(--light);margin-top:1px;}
+.tl-val{font-size:14px;font-weight:700;flex-shrink:0;align-self:center;}
 
 /* EMPTY */
 .empty-state{text-align:center;padding:40px 20px;color:var(--light);}
 .empty-icon{font-size:36px;margin-bottom:10px;}
 .empty-msg{font-size:13px;}
 
-/* LOADING OVERLAY */
+/* LOADING */
 .loading-overlay{display:none;position:fixed;inset:0;background:rgba(247,245,240,.8);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
 .loading-overlay.show{display:flex;}
 .loading-spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--vj);border-radius:50%;animation:spin .7s linear infinite;}
@@ -147,52 +156,46 @@ canvas.line-canvas{width:100%;height:100%;}
 .error-banner{background:#fff0f0;border:1px solid #ffc0c0;border-radius:10px;padding:12px 16px;font-size:13px;color:#c00;margin-bottom:16px;display:none;}
 .error-banner.show{display:block;}
 
-/* RESPONSIVE */
+/* BADGE ENCOMENDAS */
+.badge.confirmada{background:#e8f5e9;color:#2e7d32;}
+.badge.entregue{background:#f0f8e8;color:var(--vf);}
+.badge.cancelada{background:#ffebee;color:#c62828;}
+
 @media(max-width:900px){
-  .sidebar{width:64px;}
-  .sidebar-brand,.brand-label,.brand-name,.nav-item span,.sidebar-footer{display:none;}
-  .nav-item{justify-content:center;}
-  .main{margin-left:64px;}
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
   .kpi-grid{grid-template-columns:1fr 1fr;}
-  .charts-grid{grid-template-columns:1fr;}
-  .charts-grid-3{grid-template-columns:1fr;}
+  .charts-grid,.charts-grid-2,.charts-grid-3{grid-template-columns:1fr;}
   .content{padding:16px;}
   .topbar{padding:12px 16px;}
+  .hamburger{display:block;}
+  .topbar-title{font-size:16px;}
 }
 </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-brand">
     <div class="brand-label">Dashboard</div>
     <div class="brand-name"><strong>Mayse</strong><br>Floricultura & Garden</div>
   </div>
   <nav class="sidebar-nav">
-    <button class="nav-item active" onclick="showSection('visao-geral',this)">
-      <span class="ni">📊</span><span>Visão Geral</span>
-    </button>
-    <button class="nav-item" onclick="showSection('produtos',this)">
-      <span class="ni">🌷</span><span>Produtos</span>
-    </button>
-    <button class="nav-item" onclick="showSection('pagamentos',this)">
-      <span class="ni">💳</span><span>Pagamentos</span>
-    </button>
-    <button class="nav-item" onclick="showSection('horarios',this)">
-      <span class="ni">🕐</span><span>Horários</span>
-    </button>
-    <button class="nav-item" onclick="showSection('encomendas',this)">
-      <span class="ni">📋</span><span>Encomendas</span>
-    </button>
+    <button class="nav-item active" onclick="showSection('visao-geral',this)"><span class="ni">📊</span><span>Visão Geral</span></button>
+    <button class="nav-item" onclick="showSection('produtos',this)"><span class="ni">🌷</span><span>Produtos</span></button>
+    <button class="nav-item" onclick="showSection('recebimentos',this)"><span class="ni">💰</span><span>Recebimentos</span></button>
+    <button class="nav-item" onclick="showSection('pagamentos',this)"><span class="ni">💳</span><span>Pagamentos</span></button>
+    <button class="nav-item" onclick="showSection('encomendas',this)"><span class="ni">📋</span><span>Encomendas</span></button>
   </nav>
-  <div class="sidebar-footer">v1.0 · Mayse</div>
+  <div class="sidebar-footer">v2.0 · Mayse</div>
 </aside>
 
-<!-- MAIN -->
 <main class="main">
   <div class="topbar">
-    <div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="hamburger" onclick="toggleSidebar()">☰</button>
       <div class="topbar-title" id="section-title">Visão Geral <span id="period-label"></span></div>
     </div>
     <div class="period-bar">
@@ -207,80 +210,143 @@ canvas.line-canvas{width:100%;height:100%;}
   </div>
 
   <div class="content">
-
-    <!-- ERROR -->
     <div class="error-banner" id="error-banner"></div>
 
-    <!-- SETUP -->
     <div class="setup-card" id="setup-card">
       <div class="setup-title">⚙️ Conectar ao Google Sheets</div>
-      <div class="setup-desc">Cole a URL do Apps Script da sua planilha de vendas. A mesma usada no app de vendas.</div>
+      <div class="setup-desc">Cole a URL do Apps Script da sua planilha de vendas.</div>
       <div class="setup-row">
         <input class="setup-input" id="webhook-input" type="url" placeholder="https://script.google.com/macros/s/...">
         <button class="btn-save" onclick="saveWebhook()">Salvar</button>
       </div>
     </div>
 
-    <!-- SECTIONS -->
+    <!-- VISÃO GERAL -->
     <div id="section-visao-geral">
-      <div class="kpi-grid" id="kpi-grid">
+      <div class="kpi-grid">
         <div class="kpi-card green"><div class="kpi-icon">💰</div><div class="kpi-label">Faturamento</div><div class="kpi-value" id="kpi-fat">—</div><div class="kpi-sub" id="kpi-fat-sub">selecione um período</div></div>
         <div class="kpi-card rosa"><div class="kpi-icon">🛒</div><div class="kpi-label">Vendas</div><div class="kpi-value rosa" id="kpi-vendas">—</div><div class="kpi-sub" id="kpi-vendas-sub">no período</div></div>
         <div class="kpi-card dark"><div class="kpi-icon">🎯</div><div class="kpi-label">Ticket Médio</div><div class="kpi-value" id="kpi-ticket">—</div><div class="kpi-sub">por venda</div></div>
-        <div class="kpi-card green"><div class="kpi-icon">📲</div><div class="kpi-label">Recibos WhatsApp</div><div class="kpi-value" id="kpi-wa">—</div><div class="kpi-sub" id="kpi-wa-sub">enviados</div></div>
+        <div class="kpi-card gold"><div class="kpi-icon">⚠️</div><div class="kpi-label">A Pagar (7 dias)</div><div class="kpi-value gold" id="kpi-apagar">—</div><div class="kpi-sub" id="kpi-apagar-sub">próximos 7 dias</div></div>
       </div>
-      <div class="charts-grid">
+
+      <div class="charts-grid mb">
         <div class="chart-card">
-          <div class="chart-header"><div><div class="chart-title">Faturamento por dia</div><div class="chart-sub">Evolução no período</div></div></div>
-          <div class="line-chart-wrap"><canvas id="canvas-fat"></canvas></div>
+          <div class="chart-header">
+            <div><div class="chart-title">Faturamento por dia</div><div class="chart-sub">Barras empilhadas por operador</div></div>
+            <div id="fat-legend" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+          </div>
+          <div class="line-chart-wrap" style="height:200px;"><canvas id="canvas-fat"></canvas></div>
         </div>
         <div class="chart-card">
           <div class="chart-header"><div><div class="chart-title">Vendas por operador</div><div class="chart-sub">Quantidade de vendas</div></div></div>
           <div class="bar-chart" id="chart-operadores"><div class="empty-state"><div class="empty-icon">👤</div><div class="empty-msg">Carregue os dados</div></div></div>
         </div>
       </div>
+
+      <div class="charts-grid-2">
+        <!-- TIMELINE CONTAS A PAGAR -->
+        <div class="chart-card">
+          <div class="chart-header"><div><div class="chart-title">📅 Próximas contas a pagar</div><div class="chart-sub">Vencimentos nos próximos 30 dias</div></div></div>
+          <div class="timeline" id="timeline-contas"><div class="empty-state"><div class="empty-icon">💳</div><div class="empty-msg">Carregue os dados</div></div></div>
+        </div>
+        <!-- HEATMAP HORÁRIOS -->
+        <div class="chart-card">
+          <div class="chart-header"><div><div class="chart-title">🕐 Horários de pico</div><div class="chart-sub">Vendas por hora do dia</div></div></div>
+          <div style="overflow-x:auto;padding-top:4px;">
+            <div class="heatmap" id="heatmap"><div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🕐</div><div class="empty-msg">Carregue os dados</div></div></div>
+          </div>
+        </div>
+      </div>
     </div>
 
+    <!-- PRODUTOS -->
     <div id="section-produtos" style="display:none;">
       <div class="chart-card">
-        <div class="chart-header"><div><div class="chart-title">Produtos mais vendidos</div><div class="chart-sub">Por quantidade de itens</div></div></div>
+        <div class="chart-header"><div><div class="chart-title">Produtos mais vendidos</div><div class="chart-sub">Por quantidade de itens no período</div></div></div>
         <div class="bar-chart" id="chart-produtos"><div class="empty-state"><div class="empty-icon">🌷</div><div class="empty-msg">Carregue os dados</div></div></div>
       </div>
     </div>
 
-    <div id="section-pagamentos" style="display:none;">
-      <div class="charts-grid-3">
+    <!-- RECEBIMENTOS -->
+    <div id="section-recebimentos" style="display:none;">
+      <div class="charts-grid-3" style="margin-bottom:24px;">
         <div class="chart-card">
-          <div class="chart-header"><div><div class="chart-title">Distribuição</div><div class="chart-sub">Por forma de pagamento</div></div></div>
-          <div class="pie-wrap" id="chart-pie"><div class="empty-state"><div class="empty-icon">💳</div><div class="empty-msg">Carregue os dados</div></div></div>
+          <div class="chart-header"><div><div class="chart-title">Distribuição</div><div class="chart-sub">Por forma de recebimento</div></div></div>
+          <div class="pie-wrap" id="chart-pie"><div class="empty-state"><div class="empty-icon">💰</div><div class="empty-msg">Carregue os dados</div></div></div>
         </div>
         <div class="chart-card">
-          <div class="chart-header"><div><div class="chart-title">Valores por método</div><div class="chart-sub">Faturamento por forma</div></div></div>
-          <div class="bar-chart" id="chart-pagamentos"><div class="empty-state"><div class="empty-icon">💳</div><div class="empty-msg">Carregue os dados</div></div></div>
+          <div class="chart-header"><div><div class="chart-title">Valores por método</div><div class="chart-sub">Total recebido por forma</div></div></div>
+          <div class="bar-chart" id="chart-recebimentos"><div class="empty-state"><div class="empty-icon">💰</div><div class="empty-msg">Carregue os dados</div></div></div>
         </div>
         <div class="chart-card">
-          <div class="chart-header"><div><div class="chart-title">Troco total</div><div class="chart-sub">Dinheiro devolvido</div></div></div>
+          <div class="chart-header"><div><div class="chart-title">Troco total</div><div class="chart-sub">Dinheiro devolvido no período</div></div></div>
           <div id="chart-troco"><div class="empty-state"><div class="empty-icon">💵</div><div class="empty-msg">Carregue os dados</div></div></div>
         </div>
       </div>
-    </div>
-
-    <div id="section-horarios" style="display:none;">
       <div class="chart-card">
-        <div class="chart-header"><div><div class="chart-title">Mapa de calor — Horários de pico</div><div class="chart-sub">Quantidade de vendas por hora do dia</div></div></div>
-        <div style="overflow-x:auto;padding-top:8px;">
-          <div class="heatmap" id="heatmap"><div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🕐</div><div class="empty-msg">Carregue os dados</div></div></div>
+        <div class="chart-header">
+          <div><div class="chart-title">Tabela analítica</div><div class="chart-sub">Todas as transações do período — para exportação e conciliação</div></div>
+          <button onclick="exportarCSV()" style="padding:6px 14px;background:var(--vf);color:white;border:none;border-radius:8px;font-family:'Sora',sans-serif;font-size:11px;font-weight:600;cursor:pointer;">⬇ Exportar CSV</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="table-analitica">
+            <thead><tr><th>Data</th><th>Hora</th><th>Cliente</th><th>Telefone</th><th>Produtos</th><th>Dinheiro</th><th>Pix</th><th>Crédito</th><th>Débito</th><th>Troco</th><th>Total</th><th>Operador</th></tr></thead>
+            <tbody id="tbody-analitica"><tr><td colspan="12"><div class="empty-state"><div class="empty-icon">💰</div><div class="empty-msg">Carregue os dados</div></div></td></tr></tbody>
+          </table>
         </div>
       </div>
     </div>
 
-    <div id="section-encomendas" style="display:none;">
+    <!-- PAGAMENTOS (contas a pagar) -->
+    <div id="section-pagamentos" style="display:none;">
+      <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="kpi-card gold"><div class="kpi-icon">⏳</div><div class="kpi-label">Pendente</div><div class="kpi-value gold" id="pg-pendente">—</div><div class="kpi-sub" id="pg-pendente-n">contas</div></div>
+        <div class="kpi-card dark" style="--dark-after:var(--red)"><div class="kpi-icon">🔴</div><div class="kpi-label">Vencido</div><div class="kpi-value" style="color:var(--red);" id="pg-vencido">—</div><div class="kpi-sub" id="pg-vencido-n">contas em atraso</div></div>
+        <div class="kpi-card green"><div class="kpi-icon">✅</div><div class="kpi-label">Pago</div><div class="kpi-value" id="pg-pago">—</div><div class="kpi-sub" id="pg-pago-n">no período</div></div>
+      </div>
       <div class="chart-card">
-        <div class="chart-header"><div><div class="chart-title">Encomendas do período</div><div class="chart-sub">Registradas no app</div></div></div>
+        <div class="chart-header">
+          <div><div class="chart-title">Contas a pagar</div><div class="chart-sub">Todas as contas cadastradas</div></div>
+          <div style="display:flex;gap:8px;">
+            <button onclick="filtrarPag('todos')" id="f-todos" style="padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:var(--vf);color:white;font-family:'Sora',sans-serif;font-size:11px;cursor:pointer;">Todos</button>
+            <button onclick="filtrarPag('pendente')" id="f-pendente" style="padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--mid);font-family:'Sora',sans-serif;font-size:11px;cursor:pointer;">Pendente</button>
+            <button onclick="filtrarPag('vencido')" id="f-vencido" style="padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--mid);font-family:'Sora',sans-serif;font-size:11px;cursor:pointer;">Vencido</button>
+            <button onclick="filtrarPag('pago')" id="f-pago" style="padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--mid);font-family:'Sora',sans-serif;font-size:11px;cursor:pointer;">Pago</button>
+          </div>
+        </div>
         <div style="overflow-x:auto;">
-          <table class="data-table" id="table-encomendas">
-            <thead><tr><th>Data</th><th>Hora</th><th>Cliente</th><th>Telefone</th><th>Pedido</th><th>Operador</th></tr></thead>
-            <tbody id="tbody-encomendas"><tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-msg">Carregue os dados</div></div></td></tr></tbody>
+          <table class="data-table">
+            <thead><tr><th>Vencimento</th><th>Descrição</th><th>Categoria</th><th>Valor</th><th>Status</th><th>Observação</th></tr></thead>
+            <tbody id="tbody-pagamentos"><tr><td colspan="6"><div class="empty-state"><div class="empty-icon">💳</div><div class="empty-msg">Carregue os dados</div></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENCOMENDAS -->
+    <div id="section-encomendas" style="display:none;">
+      <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px;">
+        <div class="kpi-card rosa"><div class="kpi-icon">⏳</div><div class="kpi-label">Pendente</div><div class="kpi-value rosa" id="enc-pendente">—</div></div>
+        <div class="kpi-card green"><div class="kpi-icon">✅</div><div class="kpi-label">Confirmada</div><div class="kpi-value" id="enc-confirmada">—</div></div>
+        <div class="kpi-card dark"><div class="kpi-icon">🎁</div><div class="kpi-label">Entregue</div><div class="kpi-value" id="enc-entregue">—</div></div>
+        <div class="kpi-card gold"><div class="kpi-icon">❌</div><div class="kpi-label">Cancelada</div><div class="kpi-value gold" id="enc-cancelada">—</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div><div class="chart-title">Encomendas do período</div><div class="chart-sub">Registradas no app</div></div>
+          <div style="display:flex;gap:8px;">
+            <button onclick="filtrarEnc('todos')" id="ef-todos" style="padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:var(--vf);color:white;font-family:'Sora',sans-serif;font-size:11px;cursor:pointer;">Todos</button>
+            <button onclick="filtrarEnc('pendente')" id="ef-pendente" style="padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--mid);font-family:'Sora',sans-serif;font-size:11px;cursor:pointer;">Pendente</button>
+            <button onclick="filtrarEnc('confirmada')" id="ef-confirmada" style="padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--mid);font-family:'Sora',sans-serif;font-size:11px;cursor:pointer;">Confirmada</button>
+            <button onclick="filtrarEnc('entregue')" id="ef-entregue" style="padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--mid);font-family:'Sora',sans-serif;font-size:11px;cursor:pointer;">Entregue</button>
+            <button onclick="filtrarEnc('cancelada')" id="ef-cancelada" style="padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--mid);font-family:'Sora',sans-serif;font-size:11px;cursor:pointer;">Cancelada</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead><tr><th>Data</th><th>Hora</th><th>Cliente</th><th>Telefone</th><th>Pedido</th><th>Status</th><th>Operador</th></tr></thead>
+            <tbody id="tbody-encomendas"><tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-msg">Carregue os dados</div></div></td></tr></tbody>
           </table>
         </div>
       </div>
@@ -291,41 +357,71 @@ canvas.line-canvas{width:100%;height:100%;}
 
 <div class="loading-overlay" id="loading-overlay">
   <div class="loading-spinner"></div>
-  <div class="loading-text">Carregando dados da planilha…</div>
+  <div class="loading-text">Carregando dados…</div>
 </div>
 
 <script>
 // ── STATE ──
 let webhookUrl = localStorage.getItem('mayse_dash_webhook') || '';
-let allVendas = [];
-let allEncomendas = [];
+let allVendas = [], allEncomendas = [], allPagamentos = [];
+let filtroAtual = 'todos';
 
 // ── INIT ──
 const today = new Date();
-const d7 = new Date(today); d7.setDate(d7.getDate() - 7);
-document.getElementById('date-from').value = fmtDate(d7);
-document.getElementById('date-to').value = fmtDate(today);
+const d7 = new Date(today); d7.setDate(d7.getDate()-7);
+document.getElementById('date-from').value = fmtISO(d7);
+document.getElementById('date-to').value   = fmtISO(today);
 
 if(webhookUrl) {
   document.getElementById('setup-card').style.display = 'none';
   document.getElementById('webhook-input').value = webhookUrl;
-} else {
-  document.getElementById('webhook-input').value = webhookUrl;
 }
 
-function fmtDate(d) {
-  return d.toISOString().split('T')[0];
-}
-function parseDateBR(str) {
-  // "DD/MM/YYYY"
-  const p = str.split('/');
-  if(p.length === 3) return new Date(parseInt(p[2]), parseInt(p[1])-1, parseInt(p[0]));
-  return new Date(str);
-}
-function fmt(n) { return 'R$ ' + parseFloat(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-function fmtN(n) { return parseFloat(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+// ── DATE HELPERS ──
+function fmtISO(d) { return d.toISOString().split('T')[0]; }
 
-// ── SAVE WEBHOOK ──
+function parseDate(val) {
+  if(!val) return null;
+  // ISO from Sheets: "2026-05-30T03:00:00.000Z"
+  if(typeof val === 'string' && val.includes('T')) {
+    const d = new Date(val);
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  }
+  // dd/mm/yyyy
+  if(typeof val === 'string' && val.includes('/')) {
+    const p = val.split('/');
+    return new Date(parseInt(p[2]), parseInt(p[1])-1, parseInt(p[0]));
+  }
+  return new Date(val);
+}
+
+function fmtDateBR(d) {
+  if(!d) return '—';
+  return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+}
+
+function fmtHora(val) {
+  if(!val) return '—';
+  if(typeof val === 'string' && val.includes('T')) {
+    const d = new Date(val);
+    return d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  }
+  return String(val).trim();
+}
+
+function fmt(n) { return 'R$ '+parseFloat(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+function statusVencimento(val) {
+  const d = parseDate(val);
+  if(!d) return 'pendente';
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const diff = Math.floor((d-hoje)/(1000*60*60*24));
+  if(diff < 0) return 'vencido';
+  if(diff === 0) return 'hoje';
+  return null; // usa o status da planilha
+}
+
+// ── WEBHOOK ──
 function saveWebhook() {
   const url = document.getElementById('webhook-input').value.trim();
   if(!url.startsWith('https://script.google.com')) { alert('URL inválida'); return; }
@@ -336,57 +432,64 @@ function saveWebhook() {
 
 // ── NAV ──
 function showSection(name, btn) {
-  ['visao-geral','produtos','pagamentos','horarios','encomendas'].forEach(s => {
+  ['visao-geral','produtos','recebimentos','pagamentos','encomendas'].forEach(s => {
     document.getElementById('section-'+s).style.display = s===name ? 'block' : 'none';
   });
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  const titles = {'visao-geral':'Visão Geral','produtos':'Produtos','pagamentos':'Pagamentos','horarios':'Horários de Pico','encomendas':'Encomendas'};
+  const titles = {'visao-geral':'Visão Geral','produtos':'Produtos','recebimentos':'Recebimentos','pagamentos':'Pagamentos','encomendas':'Encomendas'};
   document.getElementById('section-title').textContent = titles[name];
-  if(allVendas.length > 0) renderAll();
+  closeSidebar();
+  if(allVendas.length > 0 || allPagamentos.length > 0) renderAll();
 }
 
-// ── LOAD DATA ──
+// ── MOBILE MENU ──
+function toggleSidebar() {
+  const s=document.getElementById('sidebar'), o=document.getElementById('sidebar-overlay');
+  s.classList.toggle('open'); o.classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('show');
+}
+
+// ── LOAD ──
 async function loadData() {
   if(!webhookUrl) { showError('Configure a URL do Google Sheets primeiro.'); return; }
   const from = document.getElementById('date-from').value;
   const to   = document.getElementById('date-to').value;
   if(!from || !to) { showError('Selecione o período.'); return; }
 
-  setLoading(true);
-  hideError();
+  setLoading(true); hideError();
 
   try {
-    // Buscar vendas
-    const urlVendas = webhookUrl + '?action=read&sheet=Vendas';
-    const urlEnc    = webhookUrl + '?action=read&sheet=Encomendas';
-
-    const [rV, rE] = await Promise.all([
-      fetch(urlVendas).then(r=>r.json()),
-      fetch(urlEnc).then(r=>r.json()).catch(()=>({data:[]}))
+    const [rV, rE, rP] = await Promise.all([
+      fetch(webhookUrl+'?action=read&sheet=Vendas').then(r=>r.json()),
+      fetch(webhookUrl+'?action=read&sheet=Encomendas').then(r=>r.json()).catch(()=>({data:[]})),
+      fetch(webhookUrl+'?action=read&sheet=Pagamentos').then(r=>r.json()).catch(()=>({data:[]}))
     ]);
 
-    if(!rV.data) throw new Error('Sem dados na aba Vendas');
+    if(!rV.data) throw new Error('Sem dados na aba Vendas. Verifique se o doGet está configurado.');
 
-    // Filtrar por período
-    const fromD = new Date(from + 'T00:00:00');
-    const toD   = new Date(to   + 'T23:59:59');
+    const fromD = new Date(from+'T00:00:00');
+    const toD   = new Date(to+'T23:59:59');
 
-    allVendas = rV.data.filter(row => {
-      const d = parseDateBR(row.Data||'');
-      return d >= fromD && d <= toD;
+    allVendas = rV.data.filter(r => {
+      const d = parseDate(r.Data);
+      return d && d >= fromD && d <= toD;
     });
-    allEncomendas = (rE.data||[]).filter(row => {
-      const d = parseDateBR(row.Data||'');
-      return d >= fromD && d <= toD;
+    allEncomendas = (rE.data||[]).filter(r => {
+      const d = parseDate(r.Data);
+      return d && d >= fromD && d <= toD;
     });
+    allPagamentos = (rP.data||[]);
 
     const label = `${new Date(from).toLocaleDateString('pt-BR')} – ${new Date(to).toLocaleDateString('pt-BR')}`;
     document.getElementById('period-label').textContent = label;
 
     renderAll();
   } catch(err) {
-    showError('Erro ao carregar dados: ' + err.message + '. Verifique se o Apps Script tem a função doGet configurada.');
+    showError('Erro: ' + err.message);
   }
 
   setLoading(false);
@@ -397,269 +500,400 @@ function renderAll() {
   renderFaturamentoDia();
   renderOperadores();
   renderProdutos();
-  renderPagamentos();
+  renderRecebimentos();
+  renderTabelaAnalitica();
   renderHeatmap();
+  renderTimelineContas();
+  renderPagamentos();
   renderEncomendas();
 }
 
 // ── KPIs ──
 function renderKPIs() {
-  const fat = allVendas.reduce((s,r) => s + parseFloat(r.Total||0), 0);
-  const n   = allVendas.length;
-  const ticket = n > 0 ? fat/n : 0;
-  const waEnviados = allVendas.filter(r => r.WA_Enviado_Hora && r.WA_Enviado_Hora.trim() !== '').length;
-  const waPct = n > 0 ? Math.round(waEnviados/n*100) : 0;
+  const fat    = allVendas.reduce((s,r)=>s+parseFloat(r.Total||0),0);
+  const n      = allVendas.length;
+  const ticket = n>0 ? fat/n : 0;
 
   document.getElementById('kpi-fat').textContent = fmt(fat);
   document.getElementById('kpi-fat-sub').textContent = `em ${n} venda${n!==1?'s':''}`;
   document.getElementById('kpi-vendas').textContent = n;
   document.getElementById('kpi-vendas-sub').textContent = 'no período selecionado';
   document.getElementById('kpi-ticket').textContent = fmt(ticket);
-  document.getElementById('kpi-wa').textContent = waEnviados;
-  document.getElementById('kpi-wa-sub').textContent = `${waPct}% das vendas`;
-}
 
-// ── FATURAMENTO POR DIA (line chart via canvas) ──
-function renderFaturamentoDia() {
-  const byDay = {};
-  allVendas.forEach(r => {
-    const d = r.Data || '—';
-    byDay[d] = (byDay[d]||0) + parseFloat(r.Total||0);
+  // Contas a pagar próximos 7 dias
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const em7  = new Date(hoje); em7.setDate(em7.getDate()+7);
+  const prox7 = allPagamentos.filter(r => {
+    const d = parseDate(r.Vencimento);
+    const s = (r.Status||'').toLowerCase();
+    return d && d >= hoje && d <= em7 && s !== 'pago';
   });
-  const labels = Object.keys(byDay).sort((a,b) => parseDateBR(a)-parseDateBR(b));
-  const vals   = labels.map(l => byDay[l]);
-  drawLineChart('canvas-fat', labels, vals);
+  const totalProx7 = prox7.reduce((s,r)=>s+parseFloat(r.Valor||0),0);
+  document.getElementById('kpi-apagar').textContent = fmt(totalProx7);
+  document.getElementById('kpi-apagar-sub').textContent = `${prox7.length} conta${prox7.length!==1?'s':''} nos próximos 7 dias`;
 }
 
-function drawLineChart(id, labels, vals) {
-  const canvas = document.getElementById(id);
+// ── FATURAMENTO POR DIA (barras empilhadas por operador) ──
+const OP_COLORS = ['#12340D','#83AB33','#F489A7','#a0c84a','#c9933a','#5b8dd9','#9c56b8'];
+
+function renderFaturamentoDia() {
+  const canvas = document.getElementById('canvas-fat');
   const wrap   = canvas.parentElement;
-  canvas.width  = wrap.offsetWidth || 400;
-  canvas.height = wrap.offsetHeight || 160;
+  canvas.width  = wrap.offsetWidth || 600;
+  canvas.height = wrap.offsetHeight || 200;
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  if(!vals.length) return;
 
-  const W = canvas.width, H = canvas.height;
-  const pad = {top:16, right:16, bottom:28, left:60};
-  const cW = W - pad.left - pad.right;
-  const cH = H - pad.top  - pad.bottom;
+  // Agrupar por dia e operador
+  const byDay = {}, ops = new Set();
+  allVendas.forEach(r => {
+    const d = parseDate(r.Data); if(!d) return;
+    const key = fmtDateBR(d);
+    const op  = r.Operador||'—';
+    ops.add(op);
+    if(!byDay[key]) byDay[key] = {};
+    byDay[key][op] = (byDay[key][op]||0) + parseFloat(r.Total||0);
+  });
 
-  const max = Math.max(...vals) * 1.1 || 1;
-  const min = 0;
+  const labels = Object.keys(byDay).sort((a,b)=>parseDate(a)-parseDate(b));
+  const opList = [...ops];
+  const totals = labels.map(l => opList.reduce((s,o)=>s+(byDay[l][o]||0),0));
+  const maxVal = Math.max(...totals, 1);
 
-  // Grid lines
-  ctx.strokeStyle = '#f0ede8';
-  ctx.lineWidth = 1;
+  if(!labels.length) { ctx.fillStyle='#aaa'; ctx.font='13px Sora'; ctx.textAlign='center'; ctx.fillText('Sem dados', canvas.width/2, canvas.height/2); return; }
+
+  const W=canvas.width, H=canvas.height;
+  const pad={top:32,right:12,bottom:30,left:60};
+  const cW=W-pad.left-pad.right, cH=H-pad.top-pad.bottom;
+  const barW = Math.max(6, Math.min(40, cW/labels.length*0.7));
+  const gap   = cW/labels.length;
+
+  // Grid
+  ctx.strokeStyle='#f0ede8'; ctx.lineWidth=1;
   for(let i=0;i<=4;i++){
-    const y = pad.top + cH - (i/4)*cH;
-    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left+cW, y); ctx.stroke();
+    const y=pad.top+cH-(i/4)*cH;
+    ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(pad.left+cW,y); ctx.stroke();
     ctx.fillStyle='#aaa'; ctx.font='10px Sora'; ctx.textAlign='right';
-    ctx.fillText('R$'+((min+(max-min)*i/4)/1000).toFixed(1)+'k', pad.left-4, y+3);
+    ctx.fillText('R$'+(maxVal*i/4/1000).toFixed(1)+'k', pad.left-4, y+3);
   }
 
-  if(vals.length < 2) {
-    // Single bar
-    const x = pad.left + cW/2 - 20;
-    const barH = (vals[0]/(max||1))*cH;
-    ctx.fillStyle = '#83AB33';
-    ctx.beginPath(); ctx.roundRect(x, pad.top+cH-barH, 40, barH, 4); ctx.fill();
-    return;
-  }
+  // Bars
+  labels.forEach((day,i) => {
+    const x = pad.left + i*gap + gap/2 - barW/2;
+    let baseY = pad.top+cH;
+    opList.forEach((op,oi) => {
+      const v = byDay[day][op]||0;
+      if(v===0) return;
+      const bH = (v/maxVal)*cH;
+      ctx.fillStyle = OP_COLORS[oi%OP_COLORS.length];
+      ctx.beginPath();
+      if(oi===opList.length-1 || !opList.slice(oi+1).some(o=>byDay[day][o]>0)){
+        ctx.roundRect(x, baseY-bH, barW, bH, [3,3,0,0]);
+      } else {
+        ctx.rect(x, baseY-bH, barW, bH);
+      }
+      ctx.fill();
+      baseY -= bH;
+    });
 
-  // Area fill
-  const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top+cH);
-  grad.addColorStop(0, 'rgba(131,171,51,.25)');
-  grad.addColorStop(1, 'rgba(131,171,51,.02)');
-  ctx.fillStyle = grad;
-  ctx.beginPath();
-  vals.forEach((v,i) => {
-    const x = pad.left + (i/(vals.length-1))*cW;
-    const y = pad.top + cH - ((v-min)/(max-min))*cH;
-    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-  });
-  ctx.lineTo(pad.left+cW, pad.top+cH);
-  ctx.lineTo(pad.left, pad.top+cH);
-  ctx.closePath(); ctx.fill();
+    // Total label no topo
+    const total = totals[i];
+    const topY  = pad.top+cH-(total/maxVal)*cH;
+    ctx.fillStyle='#555'; ctx.font='bold 10px Sora'; ctx.textAlign='center';
+    ctx.fillText('R$'+(total/1000).toFixed(1)+'k', x+barW/2, topY-5);
 
-  // Line
-  ctx.strokeStyle = '#83AB33'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
-  ctx.beginPath();
-  vals.forEach((v,i) => {
-    const x = pad.left + (i/(vals.length-1))*cW;
-    const y = pad.top + cH - ((v-min)/(max-min))*cH;
-    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-  });
-  ctx.stroke();
-
-  // Dots + labels
-  vals.forEach((v,i) => {
-    const x = pad.left + (i/(vals.length-1))*cW;
-    const y = pad.top + cH - ((v-min)/(max-min))*cH;
-    ctx.fillStyle='white'; ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle='#83AB33'; ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2); ctx.fill();
     // X label
-    const lbl = labels[i].split('/').slice(0,2).join('/');
+    const lbl = day.split('/').slice(0,2).join('/');
     ctx.fillStyle='#aaa'; ctx.font='10px Sora'; ctx.textAlign='center';
-    if(vals.length <= 10 || i % Math.ceil(vals.length/8) === 0)
-      ctx.fillText(lbl, x, H-4);
+    ctx.fillText(lbl, x+barW/2, H-4);
   });
+
+  // Legend
+  const legend = document.getElementById('fat-legend');
+  legend.innerHTML = opList.map((op,i)=>`
+    <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mid);">
+      <div style="width:8px;height:8px;border-radius:2px;background:${OP_COLORS[i%OP_COLORS.length]};flex-shrink:0;"></div>
+      ${op}
+    </div>`).join('');
 }
 
 // ── BAR CHART ──
 function renderBarChart(containerId, data, colorClass, fmtVal) {
-  const el = document.getElementById(containerId);
-  if(!data.length) { el.innerHTML='<div class="empty-state"><div class="empty-msg">Sem dados no período</div></div>'; return; }
-  const max = Math.max(...data.map(d=>d.val)) || 1;
-  el.innerHTML = data.slice(0,10).map(d => `
+  const el=document.getElementById(containerId);
+  if(!data.length){el.innerHTML='<div class="empty-state"><div class="empty-msg">Sem dados no período</div></div>';return;}
+  const max=Math.max(...data.map(d=>d.val))||1;
+  el.innerHTML=data.slice(0,10).map(d=>`
     <div class="bar-row">
       <div class="bar-label" title="${d.label}">${d.label}</div>
       <div class="bar-track"><div class="bar-fill ${colorClass}" style="width:${(d.val/max*100).toFixed(1)}%"></div></div>
-      <div class="bar-val">${fmtVal ? fmt(d.val) : d.val}</div>
+      <div class="bar-val">${fmtVal?fmt(d.val):d.val}</div>
     </div>`).join('');
 }
 
 // ── OPERADORES ──
 function renderOperadores() {
-  const byOp = {};
-  allVendas.forEach(r => { const o=r.Operador||'—'; byOp[o]=(byOp[o]||0)+1; });
-  const data = Object.entries(byOp).map(([label,val])=>({label,val})).sort((a,b)=>b.val-a.val);
-  renderBarChart('chart-operadores', data, 'green', false);
+  const byOp={};
+  allVendas.forEach(r=>{ const o=r.Operador||'—'; byOp[o]=(byOp[o]||0)+1; });
+  renderBarChart('chart-operadores',Object.entries(byOp).map(([label,val])=>({label,val})).sort((a,b)=>b.val-a.val),'green',false);
 }
 
 // ── PRODUTOS ──
 function renderProdutos() {
-  const byProd = {};
-  allVendas.forEach(r => {
-    const prods = (r.Produtos||'').split('|');
-    prods.forEach(p => {
-      const nome = p.split('(')[0].trim();
-      if(!nome) return;
-      // Tentar extrair qtd
-      const m = p.match(/\((\d+)x/);
-      const qtd = m ? parseInt(m[1]) : 1;
-      byProd[nome] = (byProd[nome]||0) + qtd;
+  const byProd={};
+  allVendas.forEach(r=>{
+    (r.Produtos||'').split('|').forEach(p=>{
+      const nome=p.split('(')[0].trim(); if(!nome) return;
+      const m=p.match(/\((\d+)x/); byProd[nome]=(byProd[nome]||0)+(m?parseInt(m[1]):1);
     });
   });
-  const data = Object.entries(byProd).map(([label,val])=>({label,val})).sort((a,b)=>b.val-a.val);
-  renderBarChart('chart-produtos', data, 'rosa', false);
+  renderBarChart('chart-produtos',Object.entries(byProd).map(([label,val])=>({label,val})).sort((a,b)=>b.val-a.val),'rosa',false);
 }
 
-// ── PAGAMENTOS ──
-function renderPagamentos() {
-  let din=0, pix=0, cred=0, deb=0, troco=0;
-  allVendas.forEach(r => {
-    din   += parseFloat(r.Dinheiro||0);
-    pix   += parseFloat(r.Pix||0);
-    cred  += parseFloat(r.Credito||0);
-    deb   += parseFloat(r.Debito||0);
-    troco += parseFloat(r.Troco||0);
+// ── RECEBIMENTOS ──
+function renderRecebimentos() {
+  let din=0,pix=0,cred=0,deb=0,troco=0;
+  allVendas.forEach(r=>{ din+=parseFloat(r.Dinheiro||0); pix+=parseFloat(r.Pix||0); cred+=parseFloat(r.Credito||0); deb+=parseFloat(r.Debito||0); troco+=parseFloat(r.Troco||0); });
+  const total=din+pix+cred+deb||1;
+  const data=[{label:'Pix',val:pix},{label:'Dinheiro',val:din},{label:'Crédito',val:cred},{label:'Débito',val:deb}].filter(d=>d.val>0).sort((a,b)=>b.val-a.val);
+  renderBarChart('chart-recebimentos',data,'green',true);
+
+  // Pie
+  const colors=['#83AB33','#12340D','#F489A7','#a0c84a'];
+  const pie=document.getElementById('chart-pie');
+  if(!data.length){pie.innerHTML='<div class="empty-state"><div class="empty-msg">Sem dados</div></div>';return;}
+  const size=110,cx=55,cy=55,r=46,ri=28;
+  let svg=`<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`;
+  let angle=-Math.PI/2;
+  data.forEach((item,i)=>{
+    const pct=item.val/total, end=angle+pct*2*Math.PI;
+    const x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle),x2=cx+r*Math.cos(end),y2=cy+r*Math.sin(end);
+    const xi1=cx+ri*Math.cos(angle),yi1=cy+ri*Math.sin(angle),xi2=cx+ri*Math.cos(end),yi2=cy+ri*Math.sin(end);
+    svg+=`<path d="M${xi1},${yi1} L${x1},${y1} A${r},${r} 0 ${pct>0.5?1:0},1 ${x2},${y2} L${xi2},${yi2} A${ri},${ri} 0 ${pct>0.5?1:0},0 ${xi1},${yi1} Z" fill="${colors[i%colors.length]}" opacity=".9"/>`;
+    angle=end;
   });
-  const total = din+pix+cred+deb||1;
+  svg+=`</svg>`;
+  pie.innerHTML=`<div style="text-align:center">${svg}</div><div class="pie-legend">${data.map((item,i)=>`<div class="pie-legend-item"><span class="pie-legend-label"><span class="pie-dot" style="background:${colors[i%colors.length]}"></span>${item.label}</span><span class="pie-legend-val">${Math.round(item.val/total*100)}%</span></div>`).join('')}</div>`;
 
-  // Bar chart
-  const data = [
-    {label:'Pix', val:pix},
-    {label:'Dinheiro', val:din},
-    {label:'Crédito', val:cred},
-    {label:'Débito', val:deb},
-  ].filter(d=>d.val>0).sort((a,b)=>b.val-a.val);
-  renderBarChart('chart-pagamentos', data, 'green', true);
-
-  // Pie (SVG)
-  const colors = ['#83AB33','#12340D','#F489A7','#a0c84a'];
-  const items  = data;
-  const pie    = document.getElementById('chart-pie');
-  if(!items.length) { pie.innerHTML='<div class="empty-state"><div class="empty-msg">Sem dados</div></div>'; return; }
-
-  const size = 110, cx=size/2, cy=size/2, r=46, ri=28;
-  let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`;
-  let startAngle = -Math.PI/2;
-  items.forEach((item,i) => {
-    const pct = item.val/total;
-    const end = startAngle + pct*2*Math.PI;
-    const x1=cx+r*Math.cos(startAngle), y1=cy+r*Math.sin(startAngle);
-    const x2=cx+r*Math.cos(end), y2=cy+r*Math.sin(end);
-    const xi1=cx+ri*Math.cos(startAngle), yi1=cy+ri*Math.sin(startAngle);
-    const xi2=cx+ri*Math.cos(end), yi2=cy+ri*Math.sin(end);
-    const large = pct>0.5?1:0;
-    svg += `<path d="M${xi1},${yi1} L${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} L${xi2},${yi2} A${ri},${ri} 0 ${large},0 ${xi1},${yi1} Z" fill="${colors[i%colors.length]}" opacity=".9"/>`;
-    startAngle = end;
-  });
-  svg += `</svg>`;
-  const legend = items.map((item,i) => `
-    <div class="pie-legend-item">
-      <span class="pie-legend-label"><span class="pie-dot" style="background:${colors[i%colors.length]}"></span>${item.label}</span>
-      <span class="pie-legend-val">${Math.round(item.val/total*100)}%</span>
-    </div>`).join('');
-  pie.innerHTML = `<div style="text-align:center">${svg}</div><div class="pie-legend">${legend}</div>`;
-
-  // Troco
-  document.getElementById('chart-troco').innerHTML = `
+  document.getElementById('chart-troco').innerHTML=`
     <div style="text-align:center;padding:20px 0;">
       <div style="font-size:32px;font-weight:700;color:#7a5c00;">${fmt(troco)}</div>
       <div style="font-size:12px;color:var(--light);margin-top:6px;">em troco no período</div>
-      <div style="margin-top:16px;padding:12px;background:#fff8e6;border-radius:10px;font-size:12px;color:#7a5c00;">
-        ${allVendas.filter(r=>parseFloat(r.Troco||0)>0).length} venda${allVendas.filter(r=>parseFloat(r.Troco||0)>0).length!==1?'s tiveram':'teve'} troco
-      </div>
+      <div style="margin-top:16px;padding:12px;background:#fff8e6;border-radius:10px;font-size:12px;color:#7a5c00;">${allVendas.filter(r=>parseFloat(r.Troco||0)>0).length} venda${allVendas.filter(r=>parseFloat(r.Troco||0)>0).length!==1?'s tiveram':'teve'} troco</div>
     </div>`;
 }
 
 // ── HEATMAP ──
 function renderHeatmap() {
-  const byHour = {};
-  allVendas.forEach(r => {
-    const h = (r.Hora||'').split(':')[0];
-    if(h) byHour[h] = (byHour[h]||0) + 1;
-  });
-  const max = Math.max(...Object.values(byHour), 1);
-  const el = document.getElementById('heatmap');
-
-  // Header row
-  let html = '<div></div>';
-  for(let h=0;h<24;h++) html += `<div class="hm-hour">${h}</div>`;
-
-  // Data row
-  html += '<div class="hm-label">Vendas</div>';
+  const byHour={};
+  allVendas.forEach(r=>{ const h=fmtHora(r.Hora).split(':')[0]; if(h&&h!=='—') byHour[h]=(byHour[h]||0)+1; });
+  const max=Math.max(...Object.values(byHour),1);
+  const el=document.getElementById('heatmap');
+  let html='<div></div>';
+  for(let h=0;h<24;h++) html+=`<div class="hm-hour">${h}</div>`;
+  html+='<div class="hm-label">Vendas</div>';
   for(let h=0;h<24;h++){
-    const n = byHour[String(h).padStart(2,'0')] || byHour[String(h)] || 0;
-    const intensity = n/max;
-    const bg = n===0 ? '#f0ede8' : `rgba(131,171,51,${0.1+intensity*0.9})`;
-    html += `<div class="hm-cell" style="background:${bg}" title="${h}h: ${n} venda${n!==1?'s':''}"></div>`;
+    const n=byHour[String(h).padStart(2,'0')]||byHour[String(h)]||0;
+    const bg=n===0?'#f0ede8':`rgba(131,171,51,${0.1+n/max*0.9})`;
+    html+=`<div class="hm-cell" style="background:${bg}" title="${h}h: ${n} venda${n!==1?'s':''}"></div>`;
   }
-  el.innerHTML = html;
+  el.innerHTML=html;
 }
 
-// ── ENCOMENDAS ──
-function renderEncomendas() {
-  const tbody = document.getElementById('tbody-encomendas');
-  if(!allEncomendas.length) {
-    tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-msg">Nenhuma encomenda no período</div></div></td></tr>';
+// ── TIMELINE CONTAS ──
+function renderTimelineContas() {
+  const el=document.getElementById('timeline-contas');
+  const hoje=new Date(); hoje.setHours(0,0,0,0);
+  const em30=new Date(hoje); em30.setDate(em30.getDate()+30);
+
+  const proximas=allPagamentos
+    .filter(r=>{ const d=parseDate(r.Vencimento); return d && d>=hoje && d<=em30 && (r.Status||'').toLowerCase()!=='pago'; })
+    .sort((a,b)=>parseDate(a.Vencimento)-parseDate(b.Vencimento))
+    .slice(0,8);
+
+  if(!proximas.length){
+    el.innerHTML='<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-msg">Nenhuma conta nos próximos 30 dias</div></div>';
     return;
   }
-  tbody.innerHTML = allEncomendas.map(r => `
+
+  el.innerHTML=proximas.map((r,i)=>{
+    const d=parseDate(r.Vencimento);
+    const diff=Math.floor((d-hoje)/(1000*60*60*24));
+    const isHoje=diff===0, isUrg=diff<=3;
+    const cor=isHoje?'#F489A7':isUrg?'#c9933a':'#83AB33';
+    const diffLabel=isHoje?'Hoje':diff===1?'Amanhã':`Em ${diff} dias`;
+    return `<div class="tl-item">
+      <div class="tl-dot-wrap">
+        <div class="tl-dot" style="background:${cor}"></div>
+        ${i<proximas.length-1?'<div class="tl-line"></div>':''}
+      </div>
+      <div class="tl-body">
+        <div class="tl-date">${fmtDateBR(d)} · <span style="color:${cor};font-weight:600;">${diffLabel}</span></div>
+        <div class="tl-desc">${r.Descricao||'—'}</div>
+        <div class="tl-cat">${r.Categoria||''}</div>
+      </div>
+      <div class="tl-val" style="color:${cor};">${fmt(r.Valor)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── PAGAMENTOS (tabela) ──
+function renderPagamentos(filtro) {
+  filtro = filtro || filtroAtual || 'todos';
+  filtroAtual = filtro;
+  ['todos','pendente','vencido','pago'].forEach(f=>{
+    const btn=document.getElementById('f-'+f);
+    if(btn) btn.style.background = f===filtro?'var(--vf)':'white';
+    if(btn) btn.style.color = f===filtro?'white':'var(--mid)';
+  });
+
+  const hoje=new Date(); hoje.setHours(0,0,0,0);
+  let pendVal=0,pendN=0,vencVal=0,vencN=0,pagoVal=0,pagoN=0;
+
+  const processado=allPagamentos.map(r=>{
+    const d=parseDate(r.Vencimento);
+    const statusRaw=(r.Status||'').toLowerCase().trim();
+    let status=statusRaw;
+    if(status!=='pago'){
+      if(d){ const diff=Math.floor((d-hoje)/(1000*60*60*24)); if(diff<0) status='vencido'; else if(diff===0) status='hoje'; else status='pendente'; }
+      else status='pendente';
+    }
+    return {...r, _status:status, _d:d};
+  });
+
+  processado.forEach(r=>{
+    const v=parseFloat(r.Valor||0);
+    if(r._status==='pago'){pagoVal+=v;pagoN++;}
+    else if(r._status==='vencido'){vencVal+=v;vencN++;}
+    else{pendVal+=v;pendN++;}
+  });
+
+  document.getElementById('pg-pendente').textContent=fmt(pendVal);
+  document.getElementById('pg-pendente-n').textContent=`${pendN} conta${pendN!==1?'s':''}`;
+  document.getElementById('pg-vencido').textContent=fmt(vencVal);
+  document.getElementById('pg-vencido-n').textContent=`${vencN} em atraso`;
+  document.getElementById('pg-pago').textContent=fmt(pagoVal);
+  document.getElementById('pg-pago-n').textContent=`${pagoN} paga${pagoN!==1?'s':''}`;
+
+  const filtrado=processado.filter(r=> filtro==='todos'||r._status===filtro||r._status.includes(filtro)).sort((a,b)=>{ if(!a._d) return 1; if(!b._d) return -1; return a._d-b._d; });
+
+  const tbody=document.getElementById('tbody-pagamentos');
+  if(!filtrado.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty-state"><div class="empty-msg">Nenhuma conta encontrada</div></div></td></tr>';return;}
+
+  const badgeMap={'pago':'pago','vencido':'vencido','hoje':'hoje','pendente':'pendente'};
+  const labelMap={'pago':'Pago','vencido':'Vencido','hoje':'Hoje!','pendente':'Pendente'};
+  tbody.innerHTML=filtrado.map(r=>`
     <tr>
-      <td>${r.Data||'—'}</td>
-      <td>${r.Hora||'—'}</td>
-      <td><strong>${r.Cliente||'—'}</strong></td>
-      <td>${r.Telefone||'—'}</td>
-      <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${r.Descricao||''}">${r.Descricao||'—'}</td>
-      <td>${r.Operador||'—'}</td>
+      <td>${fmtDateBR(r._d)}</td>
+      <td><strong>${r.Descricao||'—'}</strong></td>
+      <td><span style="font-size:11px;color:var(--mid);">${r.Categoria||'—'}</span></td>
+      <td><strong>${fmt(r.Valor)}</strong></td>
+      <td><span class="badge ${badgeMap[r._status]||'pendente'}">${labelMap[r._status]||r._status}</span></td>
+      <td style="font-size:12px;color:var(--mid);">${r.Observacao||'—'}</td>
     </tr>`).join('');
 }
 
+function filtrarPag(f){ renderPagamentos(f); }
+
+// ── TABELA ANALÍTICA ──
+function renderTabelaAnalitica() {
+  const tbody = document.getElementById('tbody-analitica');
+  if(!allVendas.length){tbody.innerHTML='<tr><td colspan="12"><div class="empty-state"><div class="empty-msg">Sem dados no período</div></div></td></tr>';return;}
+  tbody.innerHTML = allVendas.map(r=>`
+    <tr>
+      <td>${fmtDateBR(parseDate(r.Data))}</td>
+      <td>${fmtHora(r.Hora)}</td>
+      <td><strong>${r.Cliente||'—'}</strong></td>
+      <td style="font-size:12px;">${r.Telefone||'—'}</td>
+      <td style="max-width:180px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${r.Produtos||''}">${r.Produtos||'—'}</td>
+      <td style="text-align:right;">${parseFloat(r.Dinheiro||0)>0?fmt(r.Dinheiro):'—'}</td>
+      <td style="text-align:right;">${parseFloat(r.Pix||0)>0?fmt(r.Pix):'—'}</td>
+      <td style="text-align:right;">${parseFloat(r.Credito||0)>0?fmt(r.Credito):'—'}</td>
+      <td style="text-align:right;">${parseFloat(r.Debito||0)>0?fmt(r.Debito):'—'}</td>
+      <td style="text-align:right;color:#7a5c00;">${parseFloat(r.Troco||0)>0?fmt(r.Troco):'—'}</td>
+      <td style="text-align:right;font-weight:700;color:var(--vf);">${fmt(r.Total)}</td>
+      <td style="font-size:12px;color:var(--mid);">${r.Operador||'—'}</td>
+    </tr>`).join('');
+}
+
+function exportarCSV() {
+  const headers = ['Data','Hora','Cliente','Telefone','Produtos','Dinheiro','Pix','Credito','Debito','Troco','Total','Operador'];
+  const rows = allVendas.map(r => [
+    fmtDateBR(parseDate(r.Data)), fmtHora(r.Hora),
+    r.Cliente||'', r.Telefone||'', (r.Produtos||'').replace(/,/g,';'),
+    r.Dinheiro||0, r.Pix||0, r.Credito||0, r.Debito||0, r.Troco||0, r.Total||0, r.Operador||''
+  ]);
+  const csv = [headers, ...rows].map(r=>r.join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href=url; a.download=`mayse-recebimentos-${document.getElementById('date-from').value}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// ── ENCOMENDAS ──
+let filtroEncAtual = 'todos';
+function filtrarEnc(f) {
+  filtroEncAtual = f;
+  ['todos','pendente','confirmada','entregue','cancelada'].forEach(x => {
+    const btn = document.getElementById('ef-'+x);
+    if(btn){ btn.style.background=x===f?'var(--vf)':'white'; btn.style.color=x===f?'white':'var(--mid)'; }
+  });
+  renderEncomendas();
+}
+
+function renderEncomendas() {
+  const counts = {pendente:0,confirmada:0,entregue:0,cancelada:0};
+  allEncomendas.forEach(r=>{
+    const s=(r.Status||'pendente').toLowerCase().trim();
+    if(counts[s]!==undefined) counts[s]++;
+    else counts.pendente++;
+  });
+  document.getElementById('enc-pendente').textContent   = counts.pendente;
+  document.getElementById('enc-confirmada').textContent = counts.confirmada;
+  document.getElementById('enc-entregue').textContent   = counts.entregue;
+  document.getElementById('enc-cancelada').textContent  = counts.cancelada;
+
+  const badgeMap = {pendente:'pendente',confirmada:'confirmada',entregue:'entregue',cancelada:'vencido'};
+  const labelMap = {pendente:'Pendente',confirmada:'Confirmada',entregue:'Entregue',cancelada:'Cancelada'};
+
+  const filtered = filtroEncAtual==='todos' ? allEncomendas :
+    allEncomendas.filter(r=>(r.Status||'pendente').toLowerCase().trim()===filtroEncAtual);
+
+  const tbody = document.getElementById('tbody-encomendas');
+  if(!filtered.length){tbody.innerHTML='<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-msg">Nenhuma encomenda encontrada</div></div></td></tr>';return;}
+  tbody.innerHTML = filtered.map(r=>{
+    const s=(r.Status||'pendente').toLowerCase().trim();
+    return `<tr>
+      <td>${fmtDateBR(parseDate(r.Data))}</td>
+      <td>${fmtHora(r.Hora)}</td>
+      <td><strong>${r.Cliente||'—'}</strong></td>
+      <td>${r.Telefone||'—'}</td>
+      <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${r.Descricao||''}">${r.Descricao||'—'}</td>
+      <td><span class="badge ${badgeMap[s]||'pendente'}">${labelMap[s]||r.Status||'Pendente'}</span></td>
+      <td>${r.Operador||'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── MOBILE MENU ──
+function toggleSidebar() {
+  const s=document.getElementById('sidebar'), o=document.getElementById('sidebar-overlay');
+  s.classList.toggle('open'); o.classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('show');
+}
+
 // ── HELPERS ──
-function setLoading(on) {
-  document.getElementById('loading-overlay').classList.toggle('show', on);
-  document.getElementById('btn-spinner').style.display = on ? 'block' : 'none';
-  document.getElementById('btn-label').textContent = on ? 'Carregando…' : 'Carregar';
-  document.querySelector('.btn-load').disabled = on;
+function setLoading(on){
+  document.getElementById('loading-overlay').classList.toggle('show',on);
+  document.getElementById('btn-spinner').style.display=on?'block':'none';
+  document.getElementById('btn-label').textContent=on?'Carregando…':'Carregar';
+  document.querySelector('.btn-load').disabled=on;
 }
-function showError(msg) {
-  const el = document.getElementById('error-banner');
-  el.textContent = msg; el.classList.add('show');
-}
-function hideError() { document.getElementById('error-banner').classList.remove('show'); }
+function showError(msg){const el=document.getElementById('error-banner');el.textContent=msg;el.classList.add('show');}
+function hideError(){document.getElementById('error-banner').classList.remove('show');}
 </script>
 </body>
 </html>
